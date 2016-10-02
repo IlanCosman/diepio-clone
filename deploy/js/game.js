@@ -68,8 +68,10 @@ function create() {
     cursors = game.input.keyboard.createCursorKeys();
     fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
+    //player.body.allowRotation = false; // the example had this but it doesn't seem to do anything
 }
 function update () {
+    player.rotation = game.physics.arcade.angleToPointer(player);
 
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
@@ -105,7 +107,7 @@ function fireBullet () {
         if (bullet)
         {
             bullet.reset(player.x + 6, player.y - 12);
-            bullet.body.velocity.y = -600;
+            game.physics.arcade.moveToPointer(bullet, 300)
             bulletTime = game.time.time + 100;
         }
     }
