@@ -62,7 +62,7 @@ function create() {
     //  The speed at which the bullet is fired
     weapon.bulletSpeed = 400;
     //  Tell the Weapon to track the 'player' Sprite, offset by 14px horizontally, 0 vertically
-    weapon.trackSprite(player, 14, 0);
+    weapon.trackSprite(player, 0, 0, true);
 
 
     aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
