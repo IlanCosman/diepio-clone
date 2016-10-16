@@ -7,19 +7,14 @@ To Do
 3. Auto rotate
 4. Classes
 5. Creeps
-
+6. Add momentum
 */
-
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update });
 
 function preload() {
-
-    //game.load.baseURL = 'http://examples.phaser.io/assets/';
-    game.load.crossOrigin = 'anonymous';
-
-    game.load.image('ship', 'sprites/thrust_ship2.png');
-    game.load.image('bullet', './Bullet.png');
-
+  game.load.baseURL = 'http://examples.phaser.io/assets/';
+  game.load.image('bullet', 'sprites/bullet.png');
+  game.load.crossOrigin = 'anonymous';
 }
 
 var player;
@@ -34,72 +29,75 @@ var cursors;
 
 var bulletTime = 0 ;
 var bullet;
-var tank;
-
+var bulletGraphics;
+var tankGraphics;
+var weapon;
+var bulletBitMap;
 function create() {
-
-    bullets = game.add.physicsGroup();
-    bullets.createMultiple(32, 'bullet', false);
-    bullets.setAll('checkWorldBounds', true);
-    bullets.setAll('outOfBoundsKill', true);
-
-    tank = game.add.graphics(0, 0);
-    tank.beginFill(0xFF0000, 1);
-    tank.drawCircle(0, 0, 33);
+    tankGraphics = game.add.graphics(0, 0);
+    tankGraphics.beginFill(0xFF0000, 1);
+    tankGraphics.drawCircle(0, 0, 33);
 
     player = game.add.sprite(400, 550);
-    player.addChild(tank);
+    player.addChild(tankGraphics);
     game.physics.arcade.enable(player);
     player.body.collideWorldBounds = true;
+    bulletBitMap = game.add.bitmapData(32, 32);
 
-    aKey = game.input.keyboard.addKey(Phaser.Keyboard.A)
-    wKey = game.input.keyboard.addKey(Phaser.Keyboard.W)
-    sKey = game.input.keyboard.addKey(Phaser.Keyboard.S)
-    dKey = game.input.keyboard.addKey(Phaser.Keyboard.D)
+    var grd = bulletBitMap.context.createLinearGradient(0, 0, 0, 32);
+
+    grd.addColorStop(0, '#8ED6FF');
+    grd.addColorStop(1, '#004CB3');
+    bulletBitMap.context.fillStyle = grd;
+
+    bulletBitMap.context.fillRect(1, 1, 10, 10);
+    game.cache.addBitmapData('bulletBitMap', bulletBitMap);
+
+    weapon = game.add.weapon(32, 'bullet');
+    weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+
+    //  Because our bullet is drawn facing up, we need to offset its rotation:
+    weapon.bulletAngleOffset = 90;
+
+    //  The speed at which the bullet is fired
+    weapon.bulletSpeed = 400;
+    //  Tell the Weapon to track the 'player' Sprite, offset by 14px horizontally, 0 vertically
+    weapon.trackSprite(player, 14, 0);
+
+
+    aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
+    wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
+    sKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
+    dKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
     cursors = game.input.keyboard.createCursorKeys();
-
-    //player.body.allowRotation = false; // the example had this but it doesn't seem to do anything
 }
 function update () {
     player.rotation = game.physics.arcade.angleToPointer(player);
 
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
-    if (cursors.left.isDown || aKey.isDown)
+    //Movement
     {
-        player.body.velocity.x = -600;
-    }
-    if (cursors.right.isDown || dKey.isDown)
-    {
-        player.body.velocity.x = 600;
-    }
-    if (cursors.down.isDown || sKey.isDown)
-    {
-        player.body.velocity.y = 600;
-    }
-    if (cursors.up.isDown || wKey.isDown)
-    {
-        player.body.velocity.y = -600;
-    }
+      if (cursors.left.isDown || aKey.isDown)
+      {
+          player.body.velocity.x = -300;
+      }
+      if (cursors.right.isDown || dKey.isDown)
+      {
+          player.body.velocity.x = 300;
+      }
+      if (cursors.down.isDown || sKey.isDown)
+      {
+          player.body.velocity.y = 300;
+      }
+      if (cursors.up.isDown || wKey.isDown)
+      {
+          player.body.velocity.y = -300;
+      }
+    }//Movement
     if (game.input.activePointer.isDown)
-    {
-        fireBullet();
-    }
-
-}
-
-function fireBullet () {
-
-    if (game.time.time > bulletTime)
-    {
-        bullet = bullets.getFirstExists(false);
-
-        if (bullet)
-        {
-            bullet.reset(player.x + 6, player.y - 12);
-            game.physics.arcade.moveToPointer(bullet, 300)
-            bulletTime = game.time.time + 500;
-        }
-    }
-
+       {
+          console.log('test');
+           weapon.fire();
+       }
 }
