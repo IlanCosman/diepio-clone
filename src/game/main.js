@@ -1,12 +1,61 @@
 /*
 To Do
-==========
+========================
+
+Creeps
+============
+1. Octagons
+2. Diffrent types of nests
+3. AI Creeps
+4. Powerups
+5. AI Creep spawning points
+6. AI creep spawning points give buffs of diffrent types
+
+Classes
+============
+
+Drones
+======
+
+Overlords
+===
+1. Rocket Overlord
+2. Exploder Overlord
+
+Necromancers
+===
+1. Creep Necromancer
+2. Pentagon Necromancer (can have alpha pentagon)
+3. Triangle Necromancer
+4. Square Necromancer
+
+Traps
+======
+1. Exploding Traps
+2. Laser Trip Wire
+3.
+
+Snipers
+======
+Invisi
+Shotgunner
+TRash can
+gunner with reload
+
+Abilities
+============
+
+Misc
+============
 1. Fix Images
 2. Auto fire
 3. Auto rotate
 4. Classes
 5. Creeps
 6. Add momentum
+7. Collisions
+
+
 */
 class Entity {
   constructor(health) {
