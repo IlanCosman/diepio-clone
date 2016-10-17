@@ -8,16 +8,54 @@ To Do
 5. Creeps
 6. Add momentum
 */
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update });
-
-function preload() {
-  game.load.baseURL = 'http://examples.phaser.io/assets/';
-  game.load.image('bullet', 'sprites/bullet.png');
-  game.load.crossOrigin = 'anonymous';
+class Entity {
+  constructor(health) {
+    this.health = health;
+  }
 }
+class Ship extends Entity {
+  constructor(stats){
+    super(stats.bodyStats.maxHealth)
+    this.stats = stats;
+  }
+  upgrade(newStats){
+    this.stats = newStats;
+  }
+}
+class Stats {
+  constructor(weaponStats, bodyStats) {
+    this.weaponStats = weaponStats;
+    this.bodyStats = bodyStats;
+  }
+}
+class WeaponStats {
+  constructor(fireRate, bulletSpeed) {
+    this.fireRate = fireRate;
+    this.bulletSpeed = bulletSpeed;
+  }
+}
+class BodyStats {
+  constructor(maxHealth, speed) {
+    this.maxHealth = maxHealth;
+    this.speed = speed;
+  }
+}
+
+var tankWeaponStats = new WeaponStats(100, 500);
+var tankBodyStats = new BodyStats(100, 50);
+var tankStats = new Stats(tankWeaponStats, tankBodyStats);
+
+var machineGunWeaponStats = new WeaponStats(25, 200)
+var machineGunBodyStats = new BodyStats(100, 50)
+var machineGunStats = new Stats(machineGunWeaponStats, machineGunBodyStats)
+
+var ship = new Ship(machineGunStats);
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update });
 
 var player;
 var bullets;
+var weapon;
 
 var aKey;
 var wKey;
@@ -26,12 +64,17 @@ var sKey;
 var spaceKey;
 var cursors;
 
-var bulletTime = 0 ;
-var bullet;
 var bulletGraphics;
 var tankGraphics;
-var weapon;
 var bulletBitMap;
+
+function preload() {
+  game.load.baseURL = 'http://examples.phaser.io/assets/';
+  game.load.image('bullet', 'sprites/bullet.png');
+  game.load.crossOrigin = 'anonymous';
+}
+
+
 function create() {
     tankGraphics = game.add.graphics(0, 0);
     tankGraphics.beginFill(0xFF0000, 1);
@@ -52,16 +95,17 @@ function create() {
     bulletBitMap.context.fillRect(1, 1, 10, 10);
     game.cache.addBitmapData('bulletBitMap', bulletBitMap);
 
-    weapon = game.add.weapon(32, 'bullet');
+    weapon = game.add.weapon(500, 'bullet');
     weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
 
     //  Because our bullet is drawn facing up, we need to offset its rotation:
     weapon.bulletAngleOffset = 90;
-
     //  The speed at which the bullet is fired
-    weapon.bulletSpeed = 400;
+    weapon.bulletSpeed = ship.stats.weaponStats.bulletSpeed;
     //  Tell the Weapon to track the 'player' Sprite, offset by 14px horizontally, 0 vertically
     weapon.trackSprite(player, 0, 0, true);
+    //  Speed-up the rate of fire, allowing them to shoot 1 bullet every 60ms
+    weapon.fireRate = ship.stats.weaponStats.fireRate;
 
 
     aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
@@ -95,8 +139,7 @@ function update () {
       }
     }//Movement
     if (game.input.activePointer.isDown)
-       {
-          console.log('test');
-           weapon.fire();
-       }
+    {
+      weapon.fire();
+    }
 }
