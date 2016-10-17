@@ -9,11 +9,13 @@ To Do
 5. Creeps
 6. Add momentum
 */
+
 class Entity {
   constructor(health) {
     this.health = health;
   }
 }
+
 class Ship extends Entity {
   constructor(stats){
     super(stats.bodyStats.maxHealth)
@@ -23,18 +25,21 @@ class Ship extends Entity {
     this.stats = newStats;
   }
 }
+
 class Stats {
   constructor(weaponStats, bodyStats) {
     this.weaponStats = weaponStats;
     this.bodyStats = bodyStats;
   }
 }
+
 class WeaponStats {
   constructor(fireRate, bulletSpeed) {
     this.fireRate = fireRate;
     this.bulletSpeed = bulletSpeed;
   }
 }
+
 class BodyStats {
   constructor(maxHealth, speed) {
     this.maxHealth = maxHealth;
@@ -42,22 +47,27 @@ class BodyStats {
   }
 }
 
+// Create the tank stats
 var tankWeaponStats = new WeaponStats(100, 500);
 var tankBodyStats = new BodyStats(100, 50);
 var tankStats = new Stats(tankWeaponStats, tankBodyStats);
 
+// Create the machine gun stats
 var machineGunWeaponStats = new WeaponStats(25, 200)
 var machineGunBodyStats = new BodyStats(100, 50)
 var machineGunStats = new Stats(machineGunWeaponStats, machineGunBodyStats)
 
+// Put the statas in a Ship
 var ship = new Ship(machineGunStats);
 
+// Create the Phaser Game
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update });
 
 var player;
 var bullets;
 var weapon;
 
+// Keys for the game
 var aKey;
 var wKey;
 var dKey;
@@ -65,6 +75,7 @@ var sKey;
 var spaceKey;
 var cursors;
 
+// Graphics objects
 var bulletGraphics;
 var tankGraphics;
 var bulletBitMap;
@@ -74,7 +85,6 @@ function preload() {
   game.load.image('bullet', 'sprites/bullet.png');
   game.load.crossOrigin = 'anonymous';
 }
-
 
 function create() {
     tankGraphics = game.add.graphics(0, 0);
@@ -108,39 +118,38 @@ function create() {
     //  Speed-up the rate of fire, allowing them to shoot 1 bullet every 60ms
     weapon.fireRate = ship.stats.weaponStats.fireRate;
 
-
+    // Set up key control. Both WASD and cursors.
     aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
     wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
     sKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
     dKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
     cursors = game.input.keyboard.createCursorKeys();
 }
+
 function update () {
     player.rotation = game.physics.arcade.angleToPointer(player);
 
     player.body.velocity.x = 0;
     player.body.velocity.y = 0;
+
     //Movement
     {
-      if (cursors.left.isDown || aKey.isDown)
-      {
+      if (cursors.left.isDown || aKey.isDown) {
           player.body.velocity.x = -300;
       }
-      if (cursors.right.isDown || dKey.isDown)
-      {
+      if (cursors.right.isDown || dKey.isDown) {
           player.body.velocity.x = 300;
       }
-      if (cursors.down.isDown || sKey.isDown)
-      {
+      if (cursors.down.isDown || sKey.isDown) {
           player.body.velocity.y = 300;
       }
-      if (cursors.up.isDown || wKey.isDown)
-      {
+      if (cursors.up.isDown || wKey.isDown) {
           player.body.velocity.y = -300;
       }
-    }//Movement
-    if (game.input.activePointer.isDown)
-    {
+    }
+
+    // Shooting
+    if (game.input.activePointer.isDown) {
       weapon.fire();
     }
 }
