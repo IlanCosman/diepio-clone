@@ -37,8 +37,8 @@ Traps
 
 Snipers
 ======
-Invisible Sniper
-
+1. Invisible Sniper
+2. Charge sniper
 
 Misc
 ======
@@ -170,6 +170,10 @@ var tankGraphics
 var triangleGraphics
 var bulletBitMap
 
+function collideCallback() {
+  console.log('You have collided!!')
+}
+
 function preload() {
   game.load.baseURL = 'http://examples.phaser.io/assets/'
   game.load.image('bullet', 'sprites/bullet.png')
@@ -204,10 +208,12 @@ function create() {
   //Create the triangle
   triangleGraphics = game.add.graphics(0, 0)
   triangleGraphics.beginFill(0xFF0000, 1)
-  triangleGraphics.drawCircle(0, 0, 33)
+  var scale = .4
+  triangleGraphics.drawPolygon([0, 0, 50*scale, 86.6*scale, 100*scale, 0])
   triangle = game.add.sprite(100,100)
   triangle.addChild(triangleGraphics)
-
+  game.physics.arcade.enable(triangle)
+  
   // Set up key control. Both WASD and cursors.
   aKey = game.input.keyboard.addKey(Phaser.Keyboard.A)
   wKey = game.input.keyboard.addKey(Phaser.Keyboard.W)
@@ -217,6 +223,9 @@ function create() {
 }
 
 function update () {
+
+    game.physics.arcade.collide(triangle, weapon.bullets, collideCallback)
+
     player.rotation = game.physics.arcade.angleToPointer(player)
 
     player.body.velocity.x = 0
