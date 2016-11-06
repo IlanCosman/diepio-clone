@@ -154,6 +154,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: p
 var player;
 var bullets;
 var weapon;
+var triangle;
 
 // Keys for the game
 var aKey;
@@ -195,9 +196,13 @@ function create() {
   bulletBitMap.context.fillRect(1, 1, 10, 10);
   game.cache.addBitmapData('bulletBitMap', bulletBitMap);
 
-  //  Tell the Weapon to track the 'player' Sprite, offset by 14px horizontally, 0 vertically
+  // Tell the Weapon to track the 'player' Sprite, offset by 14px horizontally, 0 vertically
   weapon = ship.stats.weaponStats.makePhaserWeapon()
   weapon.trackSprite(player, 0, 0, true);
+
+  // Make the triangle
+  triangle = game.add.sprite(100, 100);
+  triangle.addChild(tankGraphics);
 
   // Set up key control. Both WASD and cursors.
   aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
