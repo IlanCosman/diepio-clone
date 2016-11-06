@@ -79,12 +79,6 @@ class Body {
     this.bodyStats = bodyStats
     this.health = bodyStats.maxHealth
   }
-  damage(amount) {
-    this.health -= amount
-    if (this.health <= 0) {
-      triangle.kill()
-    }
-  }
 }
 
 class Ship extends Body {
@@ -176,10 +170,9 @@ var tankGraphics
 var triangleGraphics
 var bulletBitMap
 
-function collideCallback() {
-  testTriangle.damage(1)
-  console.log(testTriangle.health)
-
+function collideCallback(sprite) {
+  triangle.damage(1)
+  console.log(triangle.health)
 }
 
 function preload() {
@@ -219,6 +212,7 @@ function create() {
   var scale = .4
   triangleGraphics.drawPolygon([0, 0, 50*scale, 86.6*scale, 100*scale, 0])
   triangle = game.add.sprite(500,500)
+  triangle.health = triangleBodyStats.maxHealth
   triangle.addChild(triangleGraphics)
   game.physics.arcade.enable(triangle)
 
