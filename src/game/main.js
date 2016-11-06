@@ -37,10 +37,26 @@ Traps
 
 Snipers
 ======
-Invisi
-Shotgunner
-TRash can
-gunner with reload
+Invisible Sniper
+
+
+Misc
+======
+1. Trash can
+2. Gunner with reload
+3. Lasso
+4. Grappling hook
+5. Shockwave
+6. Swordsman
+7. Spearman
+8. Teleporter
+
+Tricksters
+======
+1. Unit trickster
+2. Guy trickster
+
+
 
 Abilities
 ============
