@@ -79,6 +79,12 @@ class Body {
     this.bodyStats = bodyStats
     this.health = bodyStats.maxHealth
   }
+  damage(amount) {
+    this.health -= amount
+    if (this.health <= 0) {
+      triangle.kill()
+    }
+  }
 }
 
 class Ship extends Body {
@@ -148,7 +154,7 @@ var pentagonBodyStats = new BodyStats(40, 0, 'pentagonBody')
 
 var testTriangle = new Body(triangleBodyStats)
 
-// Create the Phaser Game
+// Create the Phaser Gameawaw
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update })
 
 var player
@@ -171,7 +177,9 @@ var triangleGraphics
 var bulletBitMap
 
 function collideCallback() {
-  console.log('You have collided!!')
+  testTriangle.damage(1)
+  console.log(testTriangle.health)
+
 }
 
 function preload() {
@@ -210,10 +218,10 @@ function create() {
   triangleGraphics.beginFill(0xFF0000, 1)
   var scale = .4
   triangleGraphics.drawPolygon([0, 0, 50*scale, 86.6*scale, 100*scale, 0])
-  triangle = game.add.sprite(100,100)
+  triangle = game.add.sprite(500,500)
   triangle.addChild(triangleGraphics)
   game.physics.arcade.enable(triangle)
-  
+
   // Set up key control. Both WASD and cursors.
   aKey = game.input.keyboard.addKey(Phaser.Keyboard.A)
   wKey = game.input.keyboard.addKey(Phaser.Keyboard.W)
