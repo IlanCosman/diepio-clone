@@ -49,14 +49,17 @@ Misc
 5. Shockwave
 6. Swordsman
 7. Spearman
-8. Teleporter
+
 
 Tricksters
 ======
 1. Unit trickster
 2. Guy trickster
 
-
+Melee
+======
+1. Speedy follower
+2. Teleporter
 
 Abilities
 ============
@@ -74,28 +77,10 @@ Misc
 
 */
 
-class Body {
-  constructor(bodyStats) {
-    this.bodyStats = bodyStats
-    this.health = bodyStats.maxHealth
-  }
-}
-
-class Ship extends Body {
-  constructor(stats){
-    super(stats.bodyStats)
-    this.stats = stats
-  }
-  upgrade(newStats){
-    this.stats = newStats
-    //TODO note that this will have to also update the bodyStats in the Body
-  }
-}
-
 class Stats {
-  constructor(weaponStats, bodyStats) {
-    this.weaponStats = weaponStats
+  constructor(bodyStats, weaponStatsList) {
     this.bodyStats = bodyStats
+    this.weaponStatsList = weaponStatsList
   }
 }
 
@@ -107,7 +92,7 @@ class WeaponStats {
 
   makePhaserWeapon() {
     // Create weapon
-    weapon = game.add.weapon(500, 'bullet')
+    var weapon = game.add.weapon(500, 'bullet')
     weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS
 
     //  Because our bullet is drawn facing up, we need to offset its rotation:
@@ -132,28 +117,28 @@ class BodyStats {
 // Create the tank stats
 var tankWeaponStats = new WeaponStats(100, 500)
 var tankBodyStats = new BodyStats(100, 50, 'shipBody')
-var tankStats = new Stats(tankWeaponStats, tankBodyStats)
+var tankStats = new Stats(tankBodyStats, [tankWeaponStats, tankWeaponStats])
 
 // Create the machine gun stats
 var machineGunWeaponStats = new WeaponStats(25, 200)
 var machineGunBodyStats = new BodyStats(100, 50,'shipBody')
-var machineGunStats = new Stats(machineGunWeaponStats, machineGunBodyStats)
+var machineGunStats = new Stats(machineGunBodyStats, [machineGunWeaponStats])
 
-// Put the statas in a Ship
-var ship = new Ship(machineGunStats)
-
+// Creeps
 var triangleBodyStats = new BodyStats(10, 0, 'triangleBody')
-var squareBodyStats = new BodyStats(20, 0, 'squareBody')
-var pentagonBodyStats = new BodyStats(40, 0, 'pentagonBody')
+var triangleStats = new Stats(triangleBodyStats, [])
 
-var testTriangle = new Body(triangleBodyStats)
+var squareBodyStats = new BodyStats(20, 0, 'squareBody')
+var squareStats = new Stats(squareBodyStats, [])
+
+var pentagonBodyStats = new BodyStats(40, 0, 'pentagonBody')
+var pentagonStats = new Stats(pentagonBodyStats, [])
 
 // Create the Phaser Gameawaw
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update })
 
 var player
 var bullets
-var weapon
 var triangle
 
 // Keys for the game
@@ -171,8 +156,8 @@ var triangleGraphics
 var bulletBitMap
 
 function collideCallback(sprite) {
-  triangle.damage(1)
-  console.log(triangle.health)
+  sprite.damage(1)
+  console.log(sprite.health)
 }
 
 function preload() {
@@ -191,20 +176,18 @@ function create() {
   player.addChild(tankGraphics)
   game.physics.arcade.enable(player)
   player.body.collideWorldBounds = true
+  player.stats = tankStats
 
-  // Create bullets
-  bulletBitMap = game.add.bitmapData(32, 32)
-  var grd = bulletBitMap.context.createLinearGradient(0, 0, 0, 32)
-  grd.addColorStop(0, '#8ED6FF')
-  grd.addColorStop(1, '#004CB3')
-  bulletBitMap.context.fillStyle = grd
-
-  bulletBitMap.context.fillRect(1, 1, 10, 10)
-  game.cache.addBitmapData('bulletBitMap', bulletBitMap)
-
-  // Tell the Weapon to track the 'player' Sprite, offset by 14px horizontally, 0 vertically
-  weapon = ship.stats.weaponStats.makePhaserWeapon()
-  weapon.trackSprite(player, 0, 0, true)
+  // Tell the Weapon to track the 'player' Sprite, offset by 0px horizontally, 0 vertically
+  player.weaponList = []
+  for (weaponIndex in player.stats.weaponStatsList) {
+    weaponStats = player.stats.weaponStatsList[weaponIndex]
+    weapon = weaponStats.makePhaserWeapon()
+    player.weaponList.push(weapon)
+    weapon.trackSprite(player, 0, 0, true)
+  }
+  // weapon = player.stats.weaponStatsList.makePhaserWeapon()
+  // weapon.trackSprite(player, 0, 0, true)
 
   //Create the triangle
   triangleGraphics = game.add.graphics(0, 0)
@@ -251,6 +234,8 @@ function update () {
 
     // Shooting
     if (game.input.activePointer.isDown) {
-      weapon.fire()
+      for (weaponIndex in player.weaponList) {
+        player.weaponList[weaponIndex].fire()
+      }
     }
 }
