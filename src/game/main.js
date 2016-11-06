@@ -77,6 +77,20 @@ Misc
 
 */
 
+function createTriangle() {
+  //Create the triangle
+  //create triangle graphics
+  triangleGraphics = game.add.graphics(0, 0)
+  triangleGraphics.beginFill(0xFF0000, 1)
+  var scale = .4
+  triangleGraphics.drawPolygon([0, 0, 50*scale, 86.6*scale, 100*scale, 0])
+
+  triangle = creepPhysicsGroup.create(game.rnd.between(0, 500), game.rnd.between(0, 500))
+  triangle.health = triangleBodyStats.maxHealth
+  triangle.addChild(triangleGraphics)
+  game.physics.arcade.enable(triangle)
+}
+
 class Stats {
   constructor(bodyStats, weaponStatsList) {
     this.bodyStats = bodyStats
@@ -117,7 +131,7 @@ class BodyStats {
 // Create the tank stats
 var tankWeaponStats = new WeaponStats(100, 500)
 var tankBodyStats = new BodyStats(100, 50, 'shipBody')
-var tankStats = new Stats(tankBodyStats, [tankWeaponStats, tankWeaponStats])
+var tankStats = new Stats(tankBodyStats, [tankWeaponStats])
 
 // Create the machine gun stats
 var machineGunWeaponStats = new WeaponStats(25, 200)
@@ -139,7 +153,6 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: p
 
 var player
 var bullets
-var triangle
 
 // Keys for the game
 var aKey
@@ -155,6 +168,8 @@ var tankGraphics
 var triangleGraphics
 var bulletBitMap
 
+var creepPhysicsGroup
+
 function collideCallback(sprite) {
   sprite.damage(1)
   console.log(sprite.health)
@@ -167,6 +182,8 @@ function preload() {
 }
 
 function create() {
+  creepPhysicsGroup = game.add.physicsGroup()
+
   //Create the player
   tankGraphics = game.add.graphics(0, 0)
   tankGraphics.beginFill(0xFF0000, 1)
@@ -186,18 +203,10 @@ function create() {
     player.weaponList.push(weapon)
     weapon.trackSprite(player, 0, 0, true)
   }
-  // weapon = player.stats.weaponStatsList.makePhaserWeapon()
-  // weapon.trackSprite(player, 0, 0, true)
 
-  //Create the triangle
-  triangleGraphics = game.add.graphics(0, 0)
-  triangleGraphics.beginFill(0xFF0000, 1)
-  var scale = .4
-  triangleGraphics.drawPolygon([0, 0, 50*scale, 86.6*scale, 100*scale, 0])
-  triangle = game.add.sprite(500,500)
-  triangle.health = triangleBodyStats.maxHealth
-  triangle.addChild(triangleGraphics)
-  game.physics.arcade.enable(triangle)
+  createTriangle()
+  createTriangle()
+
 
   // Set up key control. Both WASD and cursors.
   aKey = game.input.keyboard.addKey(Phaser.Keyboard.A)
@@ -209,7 +218,7 @@ function create() {
 
 function update () {
 
-    game.physics.arcade.collide(triangle, weapon.bullets, collideCallback)
+    game.physics.arcade.collide(creepPhysicsGroup, weapon.bullets, collideCallback)
 
     player.rotation = game.physics.arcade.angleToPointer(player)
 
