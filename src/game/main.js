@@ -170,7 +170,6 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: p
 function preload() {
     game.load.spritesheet('ship', 'assets/sprites/humstar.png', 32, 32);
     game.load.image('creep', 'assets/sprites/spinObj_01.png');
-    game.load.image('sweet', 'assets/sprites/spinObj_06.png');
 }
 
 var ship;
