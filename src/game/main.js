@@ -169,7 +169,6 @@ class PolygonBodyStats extends BodyStats {
   setBody(creep) {
     creep.body.clearShapes()
     creep.body.addPolygon({}, this.polygon())
-    creep.body.static = true;
   }
 }
 
