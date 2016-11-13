@@ -155,17 +155,23 @@ class SquareBodyStats extends BodyStats {
 }
 
 class TriangleBodyStats extends BodyStats {
+  polygon() {
+    var scale = 40
+    var s3 = 1.73 // sqrt(3)
+    return [0, scale*s3/3, -scale/2, -scale*s3/6, scale/2, -scale*s3/6]
+  }
+
   graphicsCreator() {
     var graphics = game.add.graphics(0, 0)
     graphics.beginFill(0xFF0000, 1)
-    var scale = .4
-    graphics.drawPolygon([0, 0, 50*scale, 86.6*scale, 100*scale, 0])
+    graphics.drawPolygon(this.polygon())
     return graphics
   }
 
   setBody(creep) {
-    var scale = .4;
-    // creep.body.setPolygon(0, 0, 50*scale, 86.6*scale, 100*scale, 0)
+    creep.body.clearShapes()
+    creep.body.addPolygon({}, this.polygon())
+    creep.body.static = true;
   }
 }
 
@@ -267,7 +273,7 @@ function hitCreep(body1, body2) {
   //  body1 is the space ship (as it's the body that owns the callback)
   //  body2 is the body it impacted with, in this case our creep
   //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
-  body2.sprite.alpha -= 0.1;
+  // body2.sprite.alpha -= 0.1;
 }
 
 function update() {
