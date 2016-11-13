@@ -69,12 +69,15 @@ Misc
 */
 
 function createCreep(stats) {
-  creep = creepPhysicsGroup.create(game.rnd.between(0, 500), game.rnd.between(0, 500))
-  creep.health = stats.bodyStats.maxHealth
-  creep.addChild(stats.bodyStats.graphicsCreator())
-  game.physics.p2.enable(creep)
-  creep.body.drag.set(80)
-  creep.body.mass = stats.bodyStats.maxHealth * 50
+  var creep = creeps.create(game.world.randomX, game.world.randomY, 'ship');
+  creep.health = stats.bodyStats.maxHealth;
+  creep.addChild(stats.bodyStats.graphicsCreator());
+  creep.body.setRectangle(20, 20);
+
+  // Tell the creep to use the creepCollisionGroup
+  creep.body.setCollisionGroup(creepCollisionGroup);
+
+  creep.body.collides([creepCollisionGroup, playerCollisionGroup]);
 }
 
 class Stats {
@@ -144,9 +147,9 @@ var triangleBodyStats = new BodyStats(10, 0, makeTriangleGraphics)
 var triangleStats = new Stats(triangleBodyStats, [])
 
 function makeSquareGraphics() {
-  graphics = game.add.graphics()
+  graphics = game.add.graphics(0, 0)
   graphics.beginFill(0xFFFF00, 1)
-  graphics.drawRect(0, 0, 40, 40)
+  graphics.drawRect(-20, -20, 40, 40)
   return graphics
 }
 var squareBodyStats = new BodyStats(20, 0, makeSquareGraphics)
@@ -175,6 +178,8 @@ var starfield;
 var cursors;
 
 var creeps;
+var creepCollisionGroup;
+var playerCollisionGroup;
 
 function create() {
     //  Enable P2
@@ -188,14 +193,14 @@ function create() {
     p2.restitution = 0.8;
 
     //  Create our collision groups. One for the player, one for the creeps
-    var playerCollisionGroup = p2.createCollisionGroup();
-    var creepCollisionGroup = p2.createCollisionGroup();
+    playerCollisionGroup = p2.createCollisionGroup();
+    creepCollisionGroup = p2.createCollisionGroup();
 
     //  This part is vital if you want the objects with their own collision groups to still collide with the world bounds
     //  (which we do) - what this does is adjust the bounds to use its own collision group.
     p2.updateBoundsCollisionGroup();
 
-    var creeps = game.add.group();
+    creeps = game.add.group();
     creeps.enableBody = true;
     creeps.physicsBodyType = Phaser.Physics.P2JS;
 
@@ -212,6 +217,8 @@ function create() {
         //  The first parameter is either an array or a single collision group.
         creep.body.collides([creepCollisionGroup, playerCollisionGroup]);
     }
+
+    createCreep(squareStats)
 
     //  Create our ship sprite
     ship = game.add.sprite(200, 200);
