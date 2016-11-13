@@ -1,3 +1,73 @@
+ /*
+To Do
+========================
+
+Creeps
+============
+
+1. Octagons
+2. Diffrent types of nests
+3. AI Creeps
+4. Powerups
+5. AI Creep spawning points
+6. AI creep spawning points give buffs of diffrent types
+
+Classes
+============
+Drones
+======
+Overlords
+===
+1. Rocket Overlord
+2. Exploder Overlord
+3. Vampire Overlord
+Necromancers
+===
+1. Creep Necromancer
+2. Pentagon Necromancer (can have alpha pentagon)
+3. Triangle Necromancer
+4. Square Necromancer
+Traps
+======
+1. Exploding Traps
+2. Laser Trip Wire
+3. Trap Sniper
+Snipers
+======
+1. Invisible Sniper
+2. Charge sniper
+Misc
+======
+1. Trash can
+2. Gunner with reload
+3. Lasso
+4. Grappling hook
+5. Shockwave
+6. Swordsman
+7. Spearman
+8. Zapper
+Tricksters
+======
+1. Unit trickster
+2. Guy trickster
+Melee
+======
+1. Speedy follower
+2. Teleporter
+Abilities
+============
+
+Misc
+============
+1. Fix Images
+2. Auto fire
+3. Auto rotate
+4. Classes
+5. Creeps
+6. Add momentum
+7. Collisions
+*/
+
 function createCreep(stats) {
   creep = creepPhysicsGroup.create(game.rnd.between(0, 500), game.rnd.between(0, 500))
   creep.health = stats.bodyStats.maxHealth
