@@ -107,11 +107,13 @@ class BodyStats {
     var creep = creeps.create(game.world.randomX, game.world.randomY, 'ship');
     creep.health = this.maxHealth;
     creep.addChild(this.graphicsCreator());
-    creep.body.setRectangle(20, 20);
+
+    this.setBody(creep)
 
     // Tell the creep to use the creepCollisionGroup
     creep.body.setCollisionGroup(creepCollisionGroup);
 
+    // Creeps collide with both creeps and players
     creep.body.collides([creepCollisionGroup, playerCollisionGroup]);
 
     return creep
@@ -148,7 +150,7 @@ class SquareBodyStats extends BodyStats {
   }
 
   setBody(creep) {
-    creep.body.setRect(20, 20)
+    creep.body.setRectangle(40, 40)
   }
 }
 
@@ -162,7 +164,8 @@ class TriangleBodyStats extends BodyStats {
   }
 
   setBody(creep) {
-    // TODO
+    var scale = .4;
+    // creep.body.setPolygon(0, 0, 50*scale, 86.6*scale, 100*scale, 0)
   }
 }
 
@@ -176,7 +179,8 @@ class PentagonBodyStats extends BodyStats {
   }
 
   setBody(creep) {
-    // TODO
+    var scale = .9;
+    // creep.body.setPolygon([0, 0, 50*scale, 86.6*scale, 100*scale, 0]);
   }
 }
 
@@ -237,13 +241,14 @@ function create() {
   creeps = game.add.group();
   creeps.enableBody = true;
   creeps.physicsBodyType = Phaser.Physics.P2JS;
+  creeps.enableBodyDebug = true;
 
   //  Create our ship sprite
   ship = game.add.sprite(200, 200);
   ship.addChild(tankBodyStats.graphicsCreator())
 
-  p2.enable(ship, false);
-  ship.body.setCircle(30);
+  p2.enable(ship, true);
+  ship.body.setCircle(15);
   ship.body.fixedRotation = true;
 
   //  Set the ships collision group
