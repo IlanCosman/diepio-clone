@@ -1,13 +1,9 @@
-
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
-
-    game.load.image('stars', 'assets/misc/starfield.jpg');
     game.load.spritesheet('ship', 'assets/sprites/humstar.png', 32, 32);
     game.load.image('panda', 'assets/sprites/spinObj_01.png');
     game.load.image('sweet', 'assets/sprites/spinObj_06.png');
-
 }
 
 var ship;
@@ -32,9 +28,6 @@ function create() {
     //  This part is vital if you want the objects with their own collision groups to still collide with the world bounds
     //  (which we do) - what this does is adjust the bounds to use its own collision group.
     p2.updateBoundsCollisionGroup();
-
-    starfield = game.add.tileSprite(0, 0, 800, 600, 'stars');
-    starfield.fixedToCamera = true;
 
     var pandas = game.add.group();
     pandas.enableBody = true;
