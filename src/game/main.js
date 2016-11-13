@@ -1,4 +1,98 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update, render: render });
+function createCreep(stats) {
+  creep = creepPhysicsGroup.create(game.rnd.between(0, 500), game.rnd.between(0, 500))
+  creep.health = stats.bodyStats.maxHealth
+  creep.addChild(stats.bodyStats.graphicsCreator())
+  game.physics.p2.enable(creep)
+  creep.body.drag.set(80)
+  creep.body.mass = stats.bodyStats.maxHealth * 50
+}
+
+class Stats {
+  constructor(bodyStats, weaponStatsList) {
+    this.bodyStats = bodyStats
+    this.weaponStatsList = weaponStatsList
+  }
+}
+
+class WeaponStats {
+  constructor(fireRate, bulletSpeed) {
+    this.fireRate = fireRate
+    this.bulletSpeed = bulletSpeed
+  }
+
+  makePhaserWeapon() {
+    // Create weapon
+    var weapon = game.add.weapon(500, 'bullet')
+    weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS
+
+    //  Because our bullet is drawn facing up, we need to offset its rotation:
+    weapon.bulletAngleOffset = 90
+    //  The speed at which the bullet is fired
+    weapon.bulletSpeed = this.bulletSpeed
+    //  Speed-up the rate of fire, allowing them to shoot 1 bullet every 60ms
+    weapon.fireRate = this.fireRate
+
+    return weapon
+  }
+}
+
+class BodyStats {
+  constructor(maxHealth, speed, graphicsCreator) {
+    this.maxHealth = maxHealth
+    this.speed = speed
+    this.graphicsCreator = graphicsCreator
+  }
+}
+
+
+function makeCircleGraphics() {
+  graphics = game.add.graphics(0, 0)
+  graphics.beginFill(0xFF0000, 1)
+  graphics.drawCircle(0, 0, 30)
+  return graphics
+}
+
+// Create the tank stats
+var tankWeaponStats = new WeaponStats(100, 500)
+var tankBodyStats = new BodyStats(100, 50, makeCircleGraphics)
+var tankStats = new Stats(tankBodyStats, [tankWeaponStats])
+
+// Create the machine gun stats
+var machineGunWeaponStats = new WeaponStats(25, 200)
+var machineGunBodyStats = new BodyStats(100, 50, makeCircleGraphics)
+var machineGunStats = new Stats(machineGunBodyStats, [machineGunWeaponStats])
+
+// Creeps
+function makeTriangleGraphics() {
+  graphics = game.add.graphics(0, 0)
+  graphics.beginFill(0xFF0000, 1)
+  var scale = .4
+  graphics.drawPolygon([0, 0, 50*scale, 86.6*scale, 100*scale, 0])
+  return graphics
+}
+var triangleBodyStats = new BodyStats(10, 0, makeTriangleGraphics)
+var triangleStats = new Stats(triangleBodyStats, [])
+
+function makeSquareGraphics() {
+  graphics = game.add.graphics()
+  graphics.beginFill(0xFFFF00, 1)
+  graphics.drawRect(0, 0, 40, 40)
+  return graphics
+}
+var squareBodyStats = new BodyStats(20, 0, makeSquareGraphics)
+var squareStats = new Stats(squareBodyStats, [])
+
+function makePentagonGraphics() {
+    graphics = game.add.graphics(0, 0)
+    graphics.beginFill(0x0000FF, 1)
+    var scale = .9
+    graphics.drawPolygon([0, 0, 50*scale, 86.6*scale, 100*scale, 0])
+    return graphics
+}
+var pentagonBodyStats = new BodyStats(40, 0, makePentagonGraphics)
+var pentagonStats = new Stats(pentagonBodyStats, [])
+
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
 
 function preload() {
     game.load.spritesheet('ship', 'assets/sprites/humstar.png', 32, 32);
@@ -48,14 +142,11 @@ function create() {
     }
 
     //  Create our ship sprite
-    ship = game.add.sprite(200, 200, 'ship');
-    ship.scale.set(2);
-    ship.smoothed = false;
-    ship.animations.add('fly', [0,1,2,3,4,5], 10, true);
-    ship.play('fly');
+    ship = game.add.sprite(200, 200);
+    ship.addChild(makeCircleGraphics())
 
     p2.enable(ship, false);
-    ship.body.setCircle(28);
+    ship.body.setCircle(30);
     ship.body.fixedRotation = true;
 
     //  Set the ships collision group
@@ -71,12 +162,10 @@ function create() {
 }
 
 function hitPanda(body1, body2) {
-
     //  body1 is the space ship (as it's the body that owns the callback)
     //  body2 is the body it impacted with, in this case our panda
     //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
     body2.sprite.alpha -= 0.1;
-
 }
 
 function update() {
@@ -110,11 +199,4 @@ function update() {
     {
         starfield.tilePosition.y += (ship.body.velocity.y * 16) * game.time.physicsElapsed;
     }
-
-}
-
-function render() {
-
-    game.debug.text('Collide with the Pandas!', 32, 32);
-
 }
