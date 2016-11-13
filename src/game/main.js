@@ -68,18 +68,6 @@ Misc
 7. Collisions
 */
 
-function createCreep(stats) {
-  var creep = creeps.create(game.world.randomX, game.world.randomY, 'ship');
-  creep.health = stats.bodyStats.maxHealth;
-  creep.addChild(stats.bodyStats.graphicsCreator());
-  creep.body.setRectangle(20, 20);
-
-  // Tell the creep to use the creepCollisionGroup
-  creep.body.setCollisionGroup(creepCollisionGroup);
-
-  creep.body.collides([creepCollisionGroup, playerCollisionGroup]);
-}
-
 class Stats {
   constructor(bodyStats, weaponStatsList) {
     this.bodyStats = bodyStats
@@ -110,66 +98,113 @@ class WeaponStats {
 }
 
 class BodyStats {
-  constructor(maxHealth, speed, graphicsCreator) {
-    this.maxHealth = maxHealth
-    this.speed = speed
-    this.graphicsCreator = graphicsCreator
+  constructor(maxHealth, speed) {
+    this.maxHealth = maxHealth;
+    this.speed = speed;
+  }
+
+  make() {
+    var creep = creeps.create(game.world.randomX, game.world.randomY, 'ship');
+    creep.health = this.maxHealth;
+    creep.addChild(this.graphicsCreator());
+    creep.body.setRectangle(20, 20);
+
+    // Tell the creep to use the creepCollisionGroup
+    creep.body.setCollisionGroup(creepCollisionGroup);
+
+    creep.body.collides([creepCollisionGroup, playerCollisionGroup]);
+
+    return creep
+  }
+
+  graphicsCreator() {
+    //stub
+  }
+
+  setBody(creep) {
+    //stub
   }
 }
 
+class CircleBodyStats extends BodyStats {
+  graphicsCreator() {
+    var graphics = game.add.graphics(0, 0)
+    graphics.beginFill(0xFF0000, 1)
+    graphics.drawCircle(0, 0, 30)
+    return graphics
+  }
 
-function makeCircleGraphics() {
-  graphics = game.add.graphics(0, 0)
-  graphics.beginFill(0xFF0000, 1)
-  graphics.drawCircle(0, 0, 30)
-  return graphics
+  setBody(creep) {
+    creep.body.setCircle(30)
+  }
 }
 
-// Create the tank stats
-var tankWeaponStats = new WeaponStats(100, 500)
-var tankBodyStats = new BodyStats(100, 50, makeCircleGraphics)
-var tankStats = new Stats(tankBodyStats, [tankWeaponStats])
+class SquareBodyStats extends BodyStats {
+  graphicsCreator() {
+    var graphics = game.add.graphics(0, 0)
+    graphics.beginFill(0xFFFF00, 1)
+    graphics.drawRect(-20, -20, 40, 40)
+    return graphics
+  }
 
-// Create the machine gun stats
-var machineGunWeaponStats = new WeaponStats(25, 200)
-var machineGunBodyStats = new BodyStats(100, 50, makeCircleGraphics)
-var machineGunStats = new Stats(machineGunBodyStats, [machineGunWeaponStats])
-
-// Creeps
-function makeTriangleGraphics() {
-  graphics = game.add.graphics(0, 0)
-  graphics.beginFill(0xFF0000, 1)
-  var scale = .4
-  graphics.drawPolygon([0, 0, 50*scale, 86.6*scale, 100*scale, 0])
-  return graphics
+  setBody(creep) {
+    creep.body.setRect(20, 20)
+  }
 }
-var triangleBodyStats = new BodyStats(10, 0, makeTriangleGraphics)
-var triangleStats = new Stats(triangleBodyStats, [])
 
-function makeSquareGraphics() {
-  graphics = game.add.graphics(0, 0)
-  graphics.beginFill(0xFFFF00, 1)
-  graphics.drawRect(-20, -20, 40, 40)
-  return graphics
+class TriangleBodyStats extends BodyStats {
+  graphicsCreator() {
+    var graphics = game.add.graphics(0, 0)
+    graphics.beginFill(0xFF0000, 1)
+    var scale = .4
+    graphics.drawPolygon([0, 0, 50*scale, 86.6*scale, 100*scale, 0])
+    return graphics
+  }
+
+  setBody(creep) {
+    // TODO
+  }
 }
-var squareBodyStats = new BodyStats(20, 0, makeSquareGraphics)
-var squareStats = new Stats(squareBodyStats, [])
 
-function makePentagonGraphics() {
-    graphics = game.add.graphics(0, 0)
+class PentagonBodyStats extends BodyStats {
+  graphicsCreator() {
+    var graphics = game.add.graphics(0, 0)
     graphics.beginFill(0x0000FF, 1)
     var scale = .9
     graphics.drawPolygon([0, 0, 50*scale, 86.6*scale, 100*scale, 0])
     return graphics
+  }
+
+  setBody(creep) {
+    // TODO
+  }
 }
-var pentagonBodyStats = new BodyStats(40, 0, makePentagonGraphics)
+
+// Create the tank stats
+var tankWeaponStats = new WeaponStats(100, 500)
+var tankBodyStats = new CircleBodyStats(100, 50)
+var tankStats = new Stats(tankBodyStats, [tankWeaponStats])
+
+// Create the machine gun stats
+var machineGunWeaponStats = new WeaponStats(25, 200)
+var machineGunBodyStats = new CircleBodyStats(100, 50)
+var machineGunStats = new Stats(machineGunBodyStats, [machineGunWeaponStats])
+
+// Creeps
+var triangleBodyStats = new TriangleBodyStats(10, 0)
+var triangleStats = new Stats(triangleBodyStats, [])
+
+var squareBodyStats = new SquareBodyStats(20, 0)
+var squareStats = new Stats(squareBodyStats, [])
+
+var pentagonBodyStats = new PentagonBodyStats(40, 0)
 var pentagonStats = new Stats(pentagonBodyStats, [])
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
 
 function preload() {
-    game.load.spritesheet('ship', 'assets/sprites/humstar.png', 32, 32);
-    game.load.image('creep', 'assets/sprites/spinObj_01.png');
+  game.load.spritesheet('ship', 'assets/sprites/humstar.png', 32, 32);
+  game.load.image('creep', 'assets/sprites/spinObj_01.png');
 }
 
 var ship;
@@ -181,92 +216,92 @@ var creepCollisionGroup;
 var playerCollisionGroup;
 
 function create() {
-    //  Enable P2
-    game.physics.startSystem(Phaser.Physics.P2JS);
+  //  Enable P2
+  game.physics.startSystem(Phaser.Physics.P2JS);
 
-    //  Turn on impact events for the world, without this we get no collision callbacks
-    game.physics.p2.setImpactEvents(true);
-    var p2 = game.physics.p2
+  //  Turn on impact events for the world, without this we get no collision callbacks
+  game.physics.p2.setImpactEvents(true);
+  var p2 = game.physics.p2
 
-    // I don't know what this does
-    p2.restitution = 0.8;
+  // I don't know what this does
+  p2.restitution = 0.8;
 
-    //  Create our collision groups. One for the player, one for the creeps
-    playerCollisionGroup = p2.createCollisionGroup();
-    creepCollisionGroup = p2.createCollisionGroup();
+  //  Create our collision groups. One for the player, one for the creeps
+  playerCollisionGroup = p2.createCollisionGroup();
+  creepCollisionGroup = p2.createCollisionGroup();
 
-    //  This part is vital if you want the objects with their own collision groups to still collide with the world bounds
-    //  (which we do) - what this does is adjust the bounds to use its own collision group.
-    p2.updateBoundsCollisionGroup();
+  //  This part is vital if you want the objects with their own collision groups to still collide with the world bounds
+  //  (which we do) - what this does is adjust the bounds to use its own collision group.
+  p2.updateBoundsCollisionGroup();
 
-    creeps = game.add.group();
-    creeps.enableBody = true;
-    creeps.physicsBodyType = Phaser.Physics.P2JS;
+  creeps = game.add.group();
+  creeps.enableBody = true;
+  creeps.physicsBodyType = Phaser.Physics.P2JS;
 
-    //  Create our ship sprite
-    ship = game.add.sprite(200, 200);
-    ship.addChild(makeCircleGraphics())
+  //  Create our ship sprite
+  ship = game.add.sprite(200, 200);
+  ship.addChild(tankBodyStats.graphicsCreator())
 
-    p2.enable(ship, false);
-    ship.body.setCircle(30);
-    ship.body.fixedRotation = true;
+  p2.enable(ship, false);
+  ship.body.setCircle(30);
+  ship.body.fixedRotation = true;
 
-    //  Set the ships collision group
-    ship.body.setCollisionGroup(playerCollisionGroup);
+  //  Set the ships collision group
+  ship.body.setCollisionGroup(playerCollisionGroup);
 
-    //  The ship will collide with the creeps, and when it strikes one the hitCreep callback will fire, causing it to alpha out a bit
-    //  When creeps collide with each other, nothing happens to them.
-    ship.body.collides(creepCollisionGroup, hitCreep, this);
+  //  The ship will collide with the creeps, and when it strikes one the hitCreep callback will fire, causing it to alpha out a bit
+  //  When creeps collide with each other, nothing happens to them.
+  ship.body.collides(creepCollisionGroup, hitCreep, this);
 
-    game.camera.follow(ship);
+  game.camera.follow(ship);
 
-    cursors = game.input.keyboard.createCursorKeys();
+  cursors = game.input.keyboard.createCursorKeys();
 }
 
 function hitCreep(body1, body2) {
-    //  body1 is the space ship (as it's the body that owns the callback)
-    //  body2 is the body it impacted with, in this case our creep
-    //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
-    body2.sprite.alpha -= 0.1;
+  //  body1 is the space ship (as it's the body that owns the callback)
+  //  body2 is the body it impacted with, in this case our creep
+  //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
+  body2.sprite.alpha -= 0.1;
 }
 
 function update() {
-    // Spawn new triangles
-    if (Math.random() <= 0.01) {
-      createCreep(triangleStats)
-    } else if (Math.random() <= 0.003) {
-      createCreep(squareStats)
-    } else if (Math.random() <= 0.001) {
-      createCreep(pentagonStats)
-    }
+  // Spawn new triangles
+  if (Math.random() <= 0.01) {
+    triangleBodyStats.make()
+  } else if (Math.random() <= 0.003) {
+    squareBodyStats.make()
+  } else if (Math.random() <= 0.001) {
+    pentagonBodyStats.make()
+  }
 
-    ship.body.setZeroVelocity();
+  ship.body.setZeroVelocity();
 
-    if (cursors.left.isDown)
-    {
-        ship.body.moveLeft(200);
-    }
-    else if (cursors.right.isDown)
-    {
-        ship.body.moveRight(200);
-    }
+  if (cursors.left.isDown)
+  {
+      ship.body.moveLeft(200);
+  }
+  else if (cursors.right.isDown)
+  {
+      ship.body.moveRight(200);
+  }
 
-    if (cursors.up.isDown)
-    {
-        ship.body.moveUp(200);
-    }
-    else if (cursors.down.isDown)
-    {
-        ship.body.moveDown(200);
-    }
+  if (cursors.up.isDown)
+  {
+      ship.body.moveUp(200);
+  }
+  else if (cursors.down.isDown)
+  {
+      ship.body.moveDown(200);
+  }
 
-    if (!game.camera.atLimit.x)
-    {
-        starfield.tilePosition.x += (ship.body.velocity.x * 16) * game.time.physicsElapsed;
-    }
+  if (!game.camera.atLimit.x)
+  {
+      starfield.tilePosition.x += (ship.body.velocity.x * 16) * game.time.physicsElapsed;
+  }
 
-    if (!game.camera.atLimit.y)
-    {
-        starfield.tilePosition.y += (ship.body.velocity.y * 16) * game.time.physicsElapsed;
-    }
+  if (!game.camera.atLimit.y)
+  {
+      starfield.tilePosition.y += (ship.body.velocity.y * 16) * game.time.physicsElapsed;
+  }
 }
