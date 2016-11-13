@@ -104,7 +104,7 @@ class BodyStats {
   }
 
   make() {
-    var creep = creeps.create(game.world.randomX, game.world.randomY, 'ship');
+    var creep = creeps.create(game.world.randomX, game.world.randomY);
     creep.health = this.maxHealth;
     creep.addChild(this.graphicsCreator());
 
@@ -178,7 +178,7 @@ class RegularPolygonBodyStats extends PolygonBodyStats {
   }
 
   polygon() {
-    var scale = this.maxHealth;
+    var scale = 15;
     var list = []
     for (var angle = 2*Math.PI; angle > 0; angle-=2*Math.PI/this.sides()) {
       list.push(Math.cos(angle) * scale);
@@ -219,7 +219,6 @@ var pentagonStats = new Stats(pentagonBodyStats, [])
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
 
 function preload() {
-  game.load.spritesheet('ship', 'assets/sprites/bullet1.png', 1, 1);
 }
 
 var ship;
@@ -309,15 +308,5 @@ function update() {
   else if (cursors.down.isDown)
   {
       ship.body.moveDown(200);
-  }
-
-  if (!game.camera.atLimit.x)
-  {
-      starfield.tilePosition.x += (ship.body.velocity.x * 16) * game.time.physicsElapsed;
-  }
-
-  if (!game.camera.atLimit.y)
-  {
-      starfield.tilePosition.y += (ship.body.velocity.y * 16) * game.time.physicsElapsed;
   }
 }
