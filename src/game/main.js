@@ -154,11 +154,9 @@ class SquareBodyStats extends BodyStats {
   }
 }
 
-class TriangleBodyStats extends BodyStats {
+class PolygonBodyStats extends BodyStats {
   polygon() {
-    var scale = 40
-    var s3 = 1.73 // sqrt(3)
-    return [0, scale*s3/3, -scale/2, -scale*s3/6, scale/2, -scale*s3/6]
+    // stub
   }
 
   graphicsCreator() {
@@ -175,18 +173,24 @@ class TriangleBodyStats extends BodyStats {
   }
 }
 
-class PentagonBodyStats extends BodyStats {
-  graphicsCreator() {
-    var graphics = game.add.graphics(0, 0)
-    graphics.beginFill(0x0000FF, 1)
-    var scale = .9
-    graphics.drawPolygon([0, 0, 50*scale, 86.6*scale, 100*scale, 0])
-    return graphics
+class TriangleBodyStats extends PolygonBodyStats {
+  polygon() {
+    var scale = 40
+    var s3 = Math.sqrt(3)
+    return [0, scale*s3/3, -scale/2, -scale*s3/6, scale/2, -scale*s3/6]
   }
+}
 
-  setBody(creep) {
-    var scale = .9;
-    // creep.body.setPolygon([0, 0, 50*scale, 86.6*scale, 100*scale, 0]);
+class PentagonBodyStats extends PolygonBodyStats {
+  polygon() {
+    var scale = 40
+    var s3 = 4
+    var list = []
+    for (var angle = 2*Math.PI; angle > 0; angle-=2*Math.PI/5) {
+      list.push(Math.cos(angle) * scale)
+      list.push(Math.sin(angle) * scale)
+    }//return [0, scale*s3/3, -scale/2, -scale*s3/6, scale/2, -scale*s3/6]
+    return list
   }
 }
 
@@ -209,6 +213,8 @@ var squareStats = new Stats(squareBodyStats, [])
 
 var pentagonBodyStats = new PentagonBodyStats(40, 0)
 var pentagonStats = new Stats(pentagonBodyStats, [])
+
+console.log(pentagonBodyStats.polygon())
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
 
@@ -282,7 +288,7 @@ function update() {
     triangleBodyStats.make()
   } else if (Math.random() <= 0.003) {
     squareBodyStats.make()
-  } else if (Math.random() <= 0.001) {
+  } else if (Math.random() <= 0.01) {
     pentagonBodyStats.make()
   }
 
