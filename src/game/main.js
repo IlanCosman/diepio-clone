@@ -84,7 +84,7 @@ function createCreep(stats) {
   creep = creepPhysicsGroup.create(game.rnd.between(0, 500), game.rnd.between(0, 500))
   creep.health = stats.bodyStats.maxHealth
   creep.addChild(stats.bodyStats.graphicsCreator())
-  game.physics.arcade.enable(creep)
+  game.physics.p2.enable(creep)
   creep.body.drag.set(80)
   creep.body.mass = stats.bodyStats.maxHealth * 50
 }
@@ -197,13 +197,18 @@ function preload() {
 }
 
 function create() {
+  game.stage.backgroundColor = '#124184'
+
+  // Enable p2 physics
+  game.physics.startSystem(Phaser.Physics.P2JS)
+
   creepPhysicsGroup = game.add.physicsGroup()
   playerPhysicsGroup = game.add.physicsGroup()
 
   //Create the player
   player = playerPhysicsGroup.create(400, 550)
   player.addChild(makeCircleGraphics())
-  game.physics.arcade.enable(player)
+  game.physics.p2.enable(player)
   player.body.collideWorldBounds = true
   player.stats = tankStats
   player.health = tankStats.bodyStats.maxHealth
@@ -249,11 +254,11 @@ function update () {
       createCreep(pentagonStats)
     }
 
-    game.physics.arcade.collide(creepPhysicsGroup, creepPhysicsGroup)
-    game.physics.arcade.collide(weapon.bullets, creepPhysicsGroup, collideWithDamage)
-    game.physics.arcade.collide(creepPhysicsGroup, playerPhysicsGroup, collideWithDamage)
+    // game.physics.p2.collide(creepPhysicsGroup, creepPhysicsGroup)
+    // game.physics.p2.collide(weapon.bullets, creepPhysicsGroup, collideWithDamage)
+    // game.physics.p2.collide(creepPhysicsGroup, playerPhysicsGroup, collideWithDamage)
 
-    player.rotation = game.physics.arcade.angleToPointer(player)
+    // player.rotation = game.physics.p2.angleToPointer(player)
 
     player.body.velocity.x = 0
     player.body.velocity.y = 0
