@@ -220,8 +220,7 @@ var pentagonStats = new Stats(pentagonBodyStats, [])
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
 
 function preload() {
-  game.load.spritesheet('ship', 'assets/sprites/humstar.png', 32, 32);
-  game.load.image('creep', 'assets/sprites/spinObj_01.png');
+  game.load.spritesheet('ship', 'assets/sprites/bullet1.png', 1, 1);
 }
 
 var ship;
