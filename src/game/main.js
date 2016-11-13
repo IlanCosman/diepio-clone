@@ -173,25 +173,28 @@ class PolygonBodyStats extends BodyStats {
   }
 }
 
-class TriangleBodyStats extends PolygonBodyStats {
+class RegularPolygonBodyStats extends PolygonBodyStats {
+  sides() {
+    // stub
+  }
+
   polygon() {
-    var scale = 40
-    var s3 = Math.sqrt(3)
-    return [0, scale*s3/3, -scale/2, -scale*s3/6, scale/2, -scale*s3/6]
+    var scale = this.maxHealth;
+    var list = []
+    for (var angle = 2*Math.PI; angle > 0; angle-=2*Math.PI/this.sides()) {
+      list.push(Math.cos(angle) * scale);
+      list.push(Math.sin(angle) * scale);
+    }
+    return list
   }
 }
 
-class PentagonBodyStats extends PolygonBodyStats {
-  polygon() {
-    var scale = 40
-    var s3 = 4
-    var list = []
-    for (var angle = 2*Math.PI; angle > 0; angle-=2*Math.PI/5) {
-      list.push(Math.cos(angle) * scale)
-      list.push(Math.sin(angle) * scale)
-    }//return [0, scale*s3/3, -scale/2, -scale*s3/6, scale/2, -scale*s3/6]
-    return list
-  }
+class TriangleBodyStats extends RegularPolygonBodyStats {
+  sides() { return 3; }
+}
+
+class PentagonBodyStats extends RegularPolygonBodyStats {
+  sides() { return 5; }
 }
 
 // Create the tank stats
@@ -213,8 +216,6 @@ var squareStats = new Stats(squareBodyStats, [])
 
 var pentagonBodyStats = new PentagonBodyStats(40, 0)
 var pentagonStats = new Stats(pentagonBodyStats, [])
-
-console.log(pentagonBodyStats.polygon())
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
 
