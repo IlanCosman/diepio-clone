@@ -96,7 +96,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: p
 
 function preload() {
     game.load.spritesheet('ship', 'assets/sprites/humstar.png', 32, 32);
-    game.load.image('panda', 'assets/sprites/spinObj_01.png');
+    game.load.image('creep', 'assets/sprites/spinObj_01.png');
     game.load.image('sweet', 'assets/sprites/spinObj_06.png');
 }
 
@@ -104,8 +104,9 @@ var ship;
 var starfield;
 var cursors;
 
-function create() {
+var creeps;
 
+function create() {
     //  Enable P2
     game.physics.startSystem(Phaser.Physics.P2JS);
 
@@ -113,32 +114,33 @@ function create() {
     game.physics.p2.setImpactEvents(true);
     var p2 = game.physics.p2
 
+    // I don't know what this does
     p2.restitution = 0.8;
 
-    //  Create our collision groups. One for the player, one for the pandas
+    //  Create our collision groups. One for the player, one for the creeps
     var playerCollisionGroup = p2.createCollisionGroup();
-    var pandaCollisionGroup = p2.createCollisionGroup();
+    var creepCollisionGroup = p2.createCollisionGroup();
 
     //  This part is vital if you want the objects with their own collision groups to still collide with the world bounds
     //  (which we do) - what this does is adjust the bounds to use its own collision group.
     p2.updateBoundsCollisionGroup();
 
-    var pandas = game.add.group();
-    pandas.enableBody = true;
-    pandas.physicsBodyType = Phaser.Physics.P2JS;
+    var creeps = game.add.group();
+    creeps.enableBody = true;
+    creeps.physicsBodyType = Phaser.Physics.P2JS;
 
     for (var i = 0; i < 4; i++)
     {
-        var panda = pandas.create(game.world.randomX, game.world.randomY, 'panda');
-        panda.body.setRectangle(40, 40);
+        var creep = creeps.create(game.world.randomX, game.world.randomY, 'creep');
+        creep.body.setRectangle(40, 40);
 
-        //  Tell the panda to use the pandaCollisionGroup
-        panda.body.setCollisionGroup(pandaCollisionGroup);
+        //  Tell the creep to use the creepCollisionGroup
+        creep.body.setCollisionGroup(creepCollisionGroup);
 
-        //  Pandas will collide against themselves and the player
+        //  Creeps will collide against themselves and the player
         //  If you don't set this they'll not collide with anything.
         //  The first parameter is either an array or a single collision group.
-        panda.body.collides([pandaCollisionGroup, playerCollisionGroup]);
+        creep.body.collides([creepCollisionGroup, playerCollisionGroup]);
     }
 
     //  Create our ship sprite
@@ -152,18 +154,18 @@ function create() {
     //  Set the ships collision group
     ship.body.setCollisionGroup(playerCollisionGroup);
 
-    //  The ship will collide with the pandas, and when it strikes one the hitPanda callback will fire, causing it to alpha out a bit
-    //  When pandas collide with each other, nothing happens to them.
-    ship.body.collides(pandaCollisionGroup, hitPanda, this);
+    //  The ship will collide with the creeps, and when it strikes one the hitCreep callback will fire, causing it to alpha out a bit
+    //  When creeps collide with each other, nothing happens to them.
+    ship.body.collides(creepCollisionGroup, hitCreep, this);
 
     game.camera.follow(ship);
 
     cursors = game.input.keyboard.createCursorKeys();
 }
 
-function hitPanda(body1, body2) {
+function hitCreep(body1, body2) {
     //  body1 is the space ship (as it's the body that owns the callback)
-    //  body2 is the body it impacted with, in this case our panda
+    //  body2 is the body it impacted with, in this case our creep
     //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
     body2.sprite.alpha -= 0.1;
 }
