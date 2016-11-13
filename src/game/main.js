@@ -203,22 +203,6 @@ function create() {
     creeps.enableBody = true;
     creeps.physicsBodyType = Phaser.Physics.P2JS;
 
-    for (var i = 0; i < 4; i++)
-    {
-        var creep = creeps.create(game.world.randomX, game.world.randomY, 'creep');
-        creep.body.setRectangle(40, 40);
-
-        //  Tell the creep to use the creepCollisionGroup
-        creep.body.setCollisionGroup(creepCollisionGroup);
-
-        //  Creeps will collide against themselves and the player
-        //  If you don't set this they'll not collide with anything.
-        //  The first parameter is either an array or a single collision group.
-        creep.body.collides([creepCollisionGroup, playerCollisionGroup]);
-    }
-
-    createCreep(squareStats)
-
     //  Create our ship sprite
     ship = game.add.sprite(200, 200);
     ship.addChild(makeCircleGraphics())
@@ -247,6 +231,14 @@ function hitCreep(body1, body2) {
 }
 
 function update() {
+    // Spawn new triangles
+    if (Math.random() <= 0.01) {
+      createCreep(triangleStats)
+    } else if (Math.random() <= 0.003) {
+      createCreep(squareStats)
+    } else if (Math.random() <= 0.001) {
+      createCreep(pentagonStats)
+    }
 
     ship.body.setZeroVelocity();
 
