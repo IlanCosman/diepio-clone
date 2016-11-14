@@ -196,6 +196,10 @@ class PentagonBodyStats extends RegularPolygonBodyStats {
   sides() { return 5; }
 }
 
+class HexagonBodyStats extends RegularPolygonBodyStats {
+  sides() { return 6; }
+}
+
 // Create the tank stats
 var tankWeaponStats = new WeaponStats(100, 500)
 var tankBodyStats = new CircleBodyStats(100, 50)
@@ -215,6 +219,9 @@ var squareStats = new Stats(squareBodyStats, [])
 
 var pentagonBodyStats = new PentagonBodyStats(40, 0)
 var pentagonStats = new Stats(pentagonBodyStats, [])
+
+var hexagonBodyStats = new HexagonBodyStats(40, 0)
+var hexagonStats = new Stats(hexagonBodyStats, [])
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
 
@@ -282,12 +289,21 @@ function hitCreep(body1, body2) {
 
 function update() {
   // Spawn new triangles
-  if (Math.random() <= 0.01) {
+  if (Math.random() <= 0.01)
+  {
     triangleBodyStats.make()
-  } else if (Math.random() <= 0.003) {
+  }
+  else if (Math.random() <= 0.003)
+  {
     squareBodyStats.make()
-  } else if (Math.random() <= 0.01) {
+  }
+  else if (Math.random() <= 0.01)
+  {
     pentagonBodyStats.make()
+  }
+  else if (Math.random() <= 0.005)
+  {
+    hexagonBodyStats.make()
   }
 
   ship.body.setZeroVelocity();
