@@ -174,7 +174,8 @@ class BodyStats {
     this.setStuff(creep);
 
     creep.body.setCollisionGroup(creepCollisionGroup);
-    creep.body.collides([creepCollisionGroup, playerCollisionGroup, bulletCollisionGroup], hitCreep);
+    creep.body.collides(creepCollisionGroup); // creeps don't hurt eachother when they collide
+    creep.body.collides([playerCollisionGroup, bulletCollisionGroup], hitCreep);
 
     return creep;
   }
