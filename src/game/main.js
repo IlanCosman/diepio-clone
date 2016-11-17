@@ -98,6 +98,7 @@ class Stats {
 class Weapon {
   constructor(weaponStats) {
     this.weaponStats = weaponStats;
+    this.timeTillNextShot = 0;
   }
 
   fire() {
@@ -106,24 +107,9 @@ class Weapon {
 }
 
 class WeaponStats {
-  constructor(fireRate, bulletSpeed) {
-    this.fireRate = fireRate;
+  constructor(reloadTime, bulletSpeed) {
+    this.reloadTime = reloadTime;
     this.bulletSpeed = bulletSpeed;
-  }
-
-  makePhaserWeapon() {
-    // Create weapon
-    var weapon = game.add.weapon(500, 'bullet')
-    weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS
-
-    //  Because our bullet is drawn facing up, we need to offset its rotation:
-    weapon.bulletAngleOffset = 90
-    //  The speed at which the bullet is fired
-    weapon.bulletSpeed = this.bulletSpeed
-    //  Speed-up the rate of fire, allowing them to shoot 1 bullet every 60ms
-    weapon.fireRate = this.fireRate
-
-    return weapon
   }
 }
 
@@ -370,7 +356,13 @@ function update() {
     for (weaponIndex in ship.weaponList) {
       var weapon = ship.weaponList[weaponIndex]
 
-      weapon.fire()
+      if (weapon.timeTillNextShot <= 0) {
+        weapon.fire();
+        weapon.timeTillNextShot = weapon.weaponStats.reloadTime;
+      }
+
+      weapon.timeTillNextShot--;
+      console.log(weapon.timeTillNextShot)
     }
   }
 }
