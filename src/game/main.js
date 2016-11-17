@@ -69,19 +69,18 @@ Misc
 */
 
 class Stats {
-  constructor(bodyStats, weaponStatsList) {
+  constructor(bodyStats, mountedWeaponStatsList) {
     this.bodyStats = bodyStats;
-    this.weaponStatsList = weaponStatsList;
+    this.mountedWeaponStatsList = mountedWeaponStatsList;
   }
 
   makePlayer() {
     var player = this.bodyStats.makePlayer();
     player.weaponList = []
 
-    for (var weaponIndex in this.weaponStatsList) {
-      var weaponStats = this.weaponStatsList[weaponIndex];
-
-      var newWeapon = new Weapon(weaponStats);
+    for (var weaponIndex in this.mountedWeaponStatsList) {
+      var mountedWeaponStats = this.mountedWeaponStatsList[weaponIndex];
+      var newWeapon = new Weapon(mountedWeaponStats);
       player.weaponList.push(newWeapon);
     }
 
@@ -96,13 +95,24 @@ class Stats {
 }
 
 class Weapon {
-  constructor(weaponStats) {
-    this.weaponStats = weaponStats;
+  constructor(mountedWeaponStats) {
+    this.mountedWeaponStats = mountedWeaponStats;
     this.timeTillNextShot = 0;
   }
 
   fire() {
-    bulletBodyStats.makeBullet()
+    bulletBodyStats.makeBullet(this.mountedWeaponStats.angle)
+  }
+}
+
+class MountedWeaponStats{
+  constructor(weaponStats, angle) {
+    this.weaponStats = weaponStats;
+
+    if (angle)
+      this.angle = angle;
+    else
+      this.angle = 0;
   }
 }
 
@@ -130,18 +140,20 @@ class BodyStats {
     guy.body.bodyStats = this;
   }
 
-  makeBullet() {
+  makeBullet(angle) {
     var bullet = bullets.create(ship.x, ship.y);
     this.setStuff(bullet);
 
     bullet.body.setCollisionGroup(bulletCollisionGroup);
     bullet.body.collides([creepCollisionGroup], hitCreep);
 
-    var dx = game.input.activePointer.x - bullet.body.x;
-    bullet.body.velocity.x = dx;
+    var activePointerPoint = new Phaser.Point(game.input.activePointer.x, game.input.activePointer.y)
+    activePointerPoint.subtract(bullet.body.x, bullet.body.y)
+    //activePointerPoint.clamp(0, 100)
+    activePointerPoint.rotate(0, 0, angle, true);
 
-    var dy = game.input.activePointer.y - bullet.body.y;
-    bullet.body.velocity.y = dy;
+    bullet.body.velocity.x = activePointerPoint.x;
+    bullet.body.velocity.y = activePointerPoint.y;
 
     return bullet;
   }
@@ -239,15 +251,25 @@ class HexagonBodyStats extends RegularPolygonBodyStats {
   sides() { return 6; }
 }
 
-// Create the tank stats
-var tankWeaponStats = new WeaponStats(100, 500)
-var tankBodyStats = new CircleBodyStats(100, 50, 10)
-var tankStats = new Stats(tankBodyStats, [tankWeaponStats])
+// The guns
+var normalGun = new WeaponStats(100, 500);
+var fastGun = new WeaponStats(25, 200);
 
-// Create the machine gun stats
-var machineGunWeaponStats = new WeaponStats(25, 200)
-var machineGunBodyStats = new CircleBodyStats(100, 50, 10)
-var machineGunStats = new Stats(machineGunBodyStats, [machineGunWeaponStats])
+// Create the classes
+var tankBodyStats = new CircleBodyStats(100, 50, 10);
+var tankStats = new Stats(tankBodyStats, [
+  new MountedWeaponStats(normalGun)]);
+
+var machineGunBodyStats = new CircleBodyStats(100, 50, 10);
+var machineGunStats = new Stats(machineGunBodyStats, [
+  new MountedWeaponStats(fastGun)]);
+
+var quadBodyStats = new CircleBodyStats(100, 50, 10);
+var quadStats = new Stats(quadBodyStats, [
+  new MountedWeaponStats(normalGun, 0),
+  new MountedWeaponStats(normalGun, 90),
+  new MountedWeaponStats(normalGun, 180),
+  new MountedWeaponStats(normalGun, 270)]);
 
 // Creeps
 var triangleBodyStats = new TriangleBodyStats(10, 0, 5)
@@ -316,7 +338,7 @@ function create() {
   players.physicsBodyType = Phaser.Physics.P2JS;
 
   //  Create our ship sprite
-  ship = machineGunStats.makePlayer();
+  ship = quadStats.makePlayer();
   game.camera.follow(ship);
 
   cursors = game.input.keyboard.createCursorKeys();
@@ -359,7 +381,7 @@ function update() {
 
       if (weapon.timeTillNextShot <= 0) {
         weapon.fire();
-        weapon.timeTillNextShot = weapon.weaponStats.reloadTime;
+        weapon.timeTillNextShot = weapon.mountedWeaponStats.weaponStats.reloadTime;
       }
 
       weapon.timeTillNextShot--;
