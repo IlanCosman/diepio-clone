@@ -73,6 +73,16 @@ class Stats {
     this.bodyStats = bodyStats
     this.weaponStatsList = weaponStatsList
   }
+
+  makeGuy(isPlayer) {
+    var guy = this.bodyStats.makeGuy(isPlayer)
+
+    // TODO add some weapon stuff
+
+    guy.stats = this;
+
+    return guy;
+  }
 }
 
 class WeaponStats {
@@ -97,26 +107,39 @@ class WeaponStats {
   }
 }
 
+/*
+This is an abstract class. That means that you shouldn't instatiate it.
+*/
 class BodyStats {
-  constructor(maxHealth, speed) {
+  constructor(maxHealth, speed, bodyDamage) {
     this.maxHealth = maxHealth;
     this.speed = speed;
+    this.bodyDamage = bodyDamage;
   }
 
-  make() {
-    var creep = creeps.create(game.world.randomX, game.world.randomY);
-    creep.health = this.maxHealth;
-    creep.addChild(this.graphicsCreator());
+  makeGuy(isPlayer) {
+    var guy = creeps.create(game.world.randomX, game.world.randomY);
+    guy.health = this.maxHealth;
+    guy.addChild(this.graphicsCreator());
 
-    this.setBody(creep)
+    this.setBody(guy);
 
-    // Tell the creep to use the creepCollisionGroup
-    creep.body.setCollisionGroup(creepCollisionGroup);
+    if (isPlayer) {
+      //  Set the ships collision group
+      guy.body.setCollisionGroup(playerCollisionGroup);
 
-    // Creeps collide with both creeps and players
-    creep.body.collides([creepCollisionGroup, playerCollisionGroup]);
+      //  The ship will collide with the creeps, and when it strikes one the hitCreep callback will fire, causing it to alpha out a bit
+      //  When creeps collide with each other, nothing happens to them.
+      guy.body.collides(creepCollisionGroup, hitCreep, this);
+    } else {
+      // Tell the creep to use the creepCollisionGroup
+      guy.body.setCollisionGroup(creepCollisionGroup);
 
-    return creep
+      // Creeps collide with both creeps and players
+      guy.body.collides([creepCollisionGroup, playerCollisionGroup], hitCreep);
+    }
+
+    return guy;
   }
 
   graphicsCreator() {
@@ -138,19 +161,6 @@ class CircleBodyStats extends BodyStats {
 
   setBody(creep) {
     creep.body.setCircle(30)
-  }
-}
-
-class SquareBodyStats extends BodyStats {
-  graphicsCreator() {
-    var graphics = game.add.graphics(0, 0)
-    graphics.beginFill(0xFFFF00, 1)
-    graphics.drawRect(-20, -20, 40, 40)
-    return graphics
-  }
-
-  setBody(creep) {
-    creep.body.setRectangle(40, 40)
   }
 }
 
@@ -192,6 +202,10 @@ class TriangleBodyStats extends RegularPolygonBodyStats {
   sides() { return 3; }
 }
 
+class SquareBodyStats extends RegularPolygonBodyStats {
+  sides() { return 4; }
+}
+
 class PentagonBodyStats extends RegularPolygonBodyStats {
   sides() { return 5; }
 }
@@ -202,25 +216,25 @@ class HexagonBodyStats extends RegularPolygonBodyStats {
 
 // Create the tank stats
 var tankWeaponStats = new WeaponStats(100, 500)
-var tankBodyStats = new CircleBodyStats(100, 50)
+var tankBodyStats = new CircleBodyStats(100, 50, 10)
 var tankStats = new Stats(tankBodyStats, [tankWeaponStats])
 
 // Create the machine gun stats
 var machineGunWeaponStats = new WeaponStats(25, 200)
-var machineGunBodyStats = new CircleBodyStats(100, 50)
+var machineGunBodyStats = new CircleBodyStats(100, 50, 10)
 var machineGunStats = new Stats(machineGunBodyStats, [machineGunWeaponStats])
 
 // Creeps
-var triangleBodyStats = new TriangleBodyStats(10, 0)
+var triangleBodyStats = new TriangleBodyStats(10, 0, 5)
 var triangleStats = new Stats(triangleBodyStats, [])
 
-var squareBodyStats = new SquareBodyStats(20, 0)
+var squareBodyStats = new SquareBodyStats(20, 0, 10)
 var squareStats = new Stats(squareBodyStats, [])
 
-var pentagonBodyStats = new PentagonBodyStats(40, 0)
+var pentagonBodyStats = new PentagonBodyStats(40, 0, 20)
 var pentagonStats = new Stats(pentagonBodyStats, [])
 
-var hexagonBodyStats = new HexagonBodyStats(40, 0)
+var hexagonBodyStats = new HexagonBodyStats(40, 0, 40)
 var hexagonStats = new Stats(hexagonBodyStats, [])
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
@@ -261,68 +275,43 @@ function create() {
   creeps.enableBodyDebug = true;
 
   //  Create our ship sprite
-  ship = game.add.sprite(200, 200);
-  ship.addChild(tankBodyStats.graphicsCreator())
-
-  p2.enable(ship, true);
-  ship.body.setCircle(15);
-  ship.body.fixedRotation = true;
-
-  //  Set the ships collision group
-  ship.body.setCollisionGroup(playerCollisionGroup);
-
-  //  The ship will collide with the creeps, and when it strikes one the hitCreep callback will fire, causing it to alpha out a bit
-  //  When creeps collide with each other, nothing happens to them.
-  ship.body.collides(creepCollisionGroup, hitCreep, this);
-
+  ship = machineGunStats.makeGuy(true);
   game.camera.follow(ship);
 
   cursors = game.input.keyboard.createCursorKeys();
 }
 
 function hitCreep(body1, body2) {
+
   //  body1 is the space ship (as it's the body that owns the callback)
   //  body2 is the body it impacted with, in this case our creep
   //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
-  // body2.sprite.alpha -= 0.1;
+  console.log(body1)
+  console.log(body2)
+  body1.sprite.damage(body2.sprite.stats.bodyStats.bodyDamage);
+  body2.sprite.damage(body1.sprite.stats.bodyStats.bodyDamage);
 }
 
 function update() {
   // Spawn new triangles
   if (Math.random() <= 0.01)
-  {
-    triangleBodyStats.make()
-  }
+    triangleStats.makeGuy(false)
   else if (Math.random() <= 0.003)
-  {
-    squareBodyStats.make()
-  }
+    squareStats.makeGuy(false)
   else if (Math.random() <= 0.01)
-  {
-    pentagonBodyStats.make()
-  }
+    pentagonStats.makeGuy(false)
   else if (Math.random() <= 0.005)
-  {
-    hexagonBodyStats.make()
-  }
+    hexagonStats.makeGuy(false)
 
   ship.body.setZeroVelocity();
 
   if (cursors.left.isDown)
-  {
       ship.body.moveLeft(200);
-  }
   else if (cursors.right.isDown)
-  {
       ship.body.moveRight(200);
-  }
 
   if (cursors.up.isDown)
-  {
       ship.body.moveUp(200);
-  }
   else if (cursors.down.isDown)
-  {
       ship.body.moveDown(200);
-  }
 }
