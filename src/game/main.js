@@ -101,7 +101,7 @@ class Weapon {
   }
 
   fire() {
-    bulletBodyStats.makeBullet(this.mountedWeaponStats.angle)
+    bulletBodyStats.makeBullet(this.mountedWeaponStats)
   }
 }
 
@@ -140,7 +140,7 @@ class BodyStats {
     guy.body.bodyStats = this;
   }
 
-  makeBullet(angle) {
+  makeBullet(mountedWeaponStats) {
     var bullet = bullets.create(ship.x, ship.y);
     this.setStuff(bullet);
 
@@ -149,8 +149,8 @@ class BodyStats {
 
     var activePointerPoint = new Phaser.Point(game.input.activePointer.x, game.input.activePointer.y)
     activePointerPoint.subtract(bullet.body.x, bullet.body.y)
-    //activePointerPoint.clamp(0, 100)
-    activePointerPoint.rotate(0, 0, angle, true);
+    activePointerPoint.setMagnitude(mountedWeaponStats.weaponStats.bulletSpeed)
+    activePointerPoint.rotate(0, 0, mountedWeaponStats.angle, true);
 
     bullet.body.velocity.x = activePointerPoint.x;
     bullet.body.velocity.y = activePointerPoint.y;
