@@ -156,6 +156,8 @@ class BodyStats {
     bullet.body.velocity.x = activePointerPoint.x;
     bullet.body.velocity.y = activePointerPoint.y;
 
+    bullet.lifespan = 1000;
+
     return bullet;
   }
 
@@ -180,9 +182,9 @@ class BodyStats {
   }
 
   graphicsCreator() {
-    var graphics = game.add.graphics(0, 0)
+    var graphics = game.add.graphics()
     graphics.beginFill(this.fillColor, 1);
-    graphics.lineStyle(this.bodyDamage, 0x00FFFF, 1);
+    graphics.lineStyle(this.bodyDamage*1.1, 0x002b36, 1);
     return graphics;
   }
 
@@ -193,8 +195,9 @@ class BodyStats {
 
 class CircleBodyStats extends BodyStats {
   graphicsCreator() {
+    var scale = Math.max(30, this.maxHealth);
     var graphics = super.graphicsCreator();
-    graphics.drawCircle(0, 0, this.maxHealth);
+    graphics.drawCircle(0, 0, scale);
     return graphics;
   }
 
@@ -253,20 +256,20 @@ class HexagonBodyStats extends RegularPolygonBodyStats {
 }
 
 // The guns
-var normalGun = new WeaponStats(100, 500);
-var fastGun = new WeaponStats(25, 200);
+var normalGun = new WeaponStats(25, 500);
+var fastGun = new WeaponStats(10, 200);
 
 // Create the classes
 playerColor = 0x268bd2; // Solarized blue
-var tankBodyStats = new CircleBodyStats(100, 50, 10, playerColor);
+var tankBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var tankStats = new Stats(tankBodyStats, [
   new MountedWeaponStats(normalGun)]);
 
-var machineGunBodyStats = new CircleBodyStats(100, 50, 10, playerColor);
+var machineGunBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var machineGunStats = new Stats(machineGunBodyStats, [
   new MountedWeaponStats(fastGun)]);
 
-var quadBodyStats = new CircleBodyStats(100, 50, 10, playerColor);
+var quadBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var quadStats = new Stats(quadBodyStats, [
   new MountedWeaponStats(normalGun, 0),
   new MountedWeaponStats(normalGun, 90),
@@ -274,19 +277,19 @@ var quadStats = new Stats(quadBodyStats, [
   new MountedWeaponStats(normalGun, 270)]);
 
 // Creeps
-var triangleBodyStats = new TriangleBodyStats(10, 0, 5, 0xdc322f) // Solarized yellow
+var triangleBodyStats = new TriangleBodyStats(10, 0, 0.5, 0xdc322f) // Solarized yellow
 var triangleStats = new Stats(triangleBodyStats, [])
 
-var squareBodyStats = new SquareBodyStats(20, 0, 10, 0x859900) // Solarized green
+var squareBodyStats = new SquareBodyStats(20, 0, 1, 0x859900) // Solarized green
 var squareStats = new Stats(squareBodyStats, [])
 
-var pentagonBodyStats = new PentagonBodyStats(40, 0, 20, 0x268bd2) // Solarized blue
+var pentagonBodyStats = new PentagonBodyStats(40, 0, 2, 0x268bd2) // Solarized blue
 var pentagonStats = new Stats(pentagonBodyStats, [])
 
-var hexagonBodyStats = new HexagonBodyStats(40, 0, 40, 0xdc322f) // Solarized red
+var hexagonBodyStats = new HexagonBodyStats(40, 0, 4, 0xdc322f) // Solarized red
 var hexagonStats = new Stats(hexagonBodyStats, [])
 
-var bulletBodyStats = new CircleBodyStats(3, 15, 20, playerColor)
+var bulletBodyStats = new CircleBodyStats(0.1, 15, 0.2, playerColor)
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
 
