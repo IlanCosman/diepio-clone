@@ -323,6 +323,9 @@ function create() {
   // Set background color
   game.stage.backgroundColor = 0x073642;
 
+  // Make the world fairly large
+  game.world.setBounds(0, 0, 1000, 1000);
+
   //  Enable P2
   game.physics.startSystem(Phaser.Physics.P2JS);
 
@@ -340,7 +343,7 @@ function create() {
 
   //  This part is vital if you want the objects with their own collision groups to still collide with the world bounds
   //  (which we do) - what this does is adjust the bounds to use its own collision group.
-  p2.updateBoundsCollisionGroup();
+  // p2.updateBoundsCollisionGroup();
 
   // Initialize the groups
   creeps = game.add.group();
