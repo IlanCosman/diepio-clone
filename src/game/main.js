@@ -148,8 +148,15 @@ class BodyStats {
     var bullet = bullets.create(ship.x, ship.y);
     this.setStuff(bullet);
 
-    bullet.body.setCollitionGroup(bulletCollisionGroup)
-    bullet.body.collides([creepCollisionGroup], hitCreep)
+    bullet.body.setCollisionGroup(bulletCollisionGroup);
+    bullet.body.collides([creepCollisionGroup], hitCreep);
+
+    var dx = game.input.activePointer.x - bullet.body.x;
+    bullet.body.velocity.x = dx;
+
+    var dy = game.input.activePointer.y - bullet.body.y;
+    bullet.body.velocity.y = dy;
+
     return bullet;
   }
 
@@ -268,7 +275,7 @@ var pentagonStats = new Stats(pentagonBodyStats, [])
 var hexagonBodyStats = new HexagonBodyStats(40, 0, 40)
 var hexagonStats = new Stats(hexagonBodyStats, [])
 
-var bulletBodyStats = new BodyStats(3, 15, 20)
+var bulletBodyStats = new CircleBodyStats(3, 15, 20)
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
 
