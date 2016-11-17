@@ -70,14 +70,20 @@ Misc
 
 class Stats {
   constructor(bodyStats, weaponStatsList) {
-    this.bodyStats = bodyStats
-    this.weaponStatsList = weaponStatsList
+    this.bodyStats = bodyStats;
+    this.weaponStatsList = weaponStatsList;
   }
 
   makeGuy(isPlayer) {
-    var guy = this.bodyStats.makeGuy(isPlayer)
+    var guy = this.bodyStats.makeGuy(isPlayer);
 
-    // TODO add some weapon stuff
+    for (var weaponIndex in this.weaponStatsList) {
+      var weaponStats = this.weaponStatsList[weaponIndex];
+
+      var newWeapon = new Weapon(weaponStats);
+
+
+    }
 
     guy.stats = this;
 
@@ -86,16 +92,19 @@ class Stats {
 }
 
 class Weapon {
-  constructor() {
+  constructor(weaponStats) {
+    this.weaponStats = weaponStats;
+  }
+
+  fire() {
 
   }
 }
 
-
 class WeaponStats {
   constructor(fireRate, bulletSpeed) {
-    this.fireRate = fireRate
-    this.bulletSpeed = bulletSpeed
+    this.fireRate = fireRate;
+    this.bulletSpeed = bulletSpeed;
   }
 
   makePhaserWeapon() {
