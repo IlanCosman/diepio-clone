@@ -320,6 +320,9 @@ var playerCollisionGroup;
 var bulletCollisionGroup;
 
 function create() {
+  // Set background color
+  game.stage.backgroundColor = 0x073642;
+
   //  Enable P2
   game.physics.startSystem(Phaser.Physics.P2JS);
 
