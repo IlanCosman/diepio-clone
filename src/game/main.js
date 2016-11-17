@@ -167,7 +167,10 @@ class BodyStats {
   }
 
   graphicsCreator() {
-    //stub
+    var graphics = game.add.graphics(0, 0)
+    graphics.beginFill(0xFFAA00, 1);
+    graphics.lineStyle(this.bodyDamage, 0x00FFFF, 1);
+    return graphics;
   }
 
   setBody(creep) {
@@ -177,14 +180,13 @@ class BodyStats {
 
 class CircleBodyStats extends BodyStats {
   graphicsCreator() {
-    var graphics = game.add.graphics(0, 0)
-    graphics.beginFill(0xFF0000, 1)
-    graphics.drawCircle(0, 0, 30)
-    return graphics
+    var graphics = super.graphicsCreator();
+    graphics.drawCircle(0, 0, this.maxHealth);
+    return graphics;
   }
 
   setBody(creep) {
-    creep.body.setCircle(30)
+    creep.body.setCircle(30);
   }
 }
 
@@ -194,15 +196,14 @@ class PolygonBodyStats extends BodyStats {
   }
 
   graphicsCreator() {
-    var graphics = game.add.graphics(0, 0)
-    graphics.beginFill(0xFF0000, 1)
-    graphics.drawPolygon(this.polygon())
-    return graphics
+    var graphics = super.graphicsCreator();
+    graphics.drawPolygon(this.polygon());
+    return graphics;
   }
 
   setBody(creep) {
-    creep.body.clearShapes()
-    creep.body.addPolygon({}, this.polygon())
+    creep.body.clearShapes();
+    creep.body.addPolygon({}, this.polygon());
   }
 }
 
@@ -212,7 +213,7 @@ class RegularPolygonBodyStats extends PolygonBodyStats {
   }
 
   polygon() {
-    var scale = 15;
+    var scale = this.maxHealth;
     var list = []
     for (var angle = 2*Math.PI; angle > 0; angle-=2*Math.PI/this.sides()) {
       list.push(Math.cos(angle) * scale);
@@ -362,7 +363,6 @@ function update() {
       }
 
       weapon.timeTillNextShot--;
-      console.log(weapon.timeTillNextShot)
     }
   }
 }
