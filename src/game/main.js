@@ -127,10 +127,11 @@ class WeaponStats {
 This is an abstract class. That means that you shouldn't instatiate it.
 */
 class BodyStats {
-  constructor(maxHealth, speed, bodyDamage) {
+  constructor(maxHealth, speed, bodyDamage, fillColor) {
     this.maxHealth = maxHealth;
     this.speed = speed;
     this.bodyDamage = bodyDamage;
+    this.fillColor = fillColor;
   }
 
   setStuff(guy) {
@@ -180,7 +181,7 @@ class BodyStats {
 
   graphicsCreator() {
     var graphics = game.add.graphics(0, 0)
-    graphics.beginFill(0xFFAA00, 1);
+    graphics.beginFill(this.fillColor, 1);
     graphics.lineStyle(this.bodyDamage, 0x00FFFF, 1);
     return graphics;
   }
@@ -256,15 +257,16 @@ var normalGun = new WeaponStats(100, 500);
 var fastGun = new WeaponStats(25, 200);
 
 // Create the classes
-var tankBodyStats = new CircleBodyStats(100, 50, 10);
+playerColor = 0x268bd2; // Solarized blue
+var tankBodyStats = new CircleBodyStats(100, 50, 10, playerColor);
 var tankStats = new Stats(tankBodyStats, [
   new MountedWeaponStats(normalGun)]);
 
-var machineGunBodyStats = new CircleBodyStats(100, 50, 10);
+var machineGunBodyStats = new CircleBodyStats(100, 50, 10, playerColor);
 var machineGunStats = new Stats(machineGunBodyStats, [
   new MountedWeaponStats(fastGun)]);
 
-var quadBodyStats = new CircleBodyStats(100, 50, 10);
+var quadBodyStats = new CircleBodyStats(100, 50, 10, playerColor);
 var quadStats = new Stats(quadBodyStats, [
   new MountedWeaponStats(normalGun, 0),
   new MountedWeaponStats(normalGun, 90),
@@ -272,19 +274,19 @@ var quadStats = new Stats(quadBodyStats, [
   new MountedWeaponStats(normalGun, 270)]);
 
 // Creeps
-var triangleBodyStats = new TriangleBodyStats(10, 0, 5)
+var triangleBodyStats = new TriangleBodyStats(10, 0, 5, 0xdc322f) // Solarized yellow
 var triangleStats = new Stats(triangleBodyStats, [])
 
-var squareBodyStats = new SquareBodyStats(20, 0, 10)
+var squareBodyStats = new SquareBodyStats(20, 0, 10, 0x859900) // Solarized green
 var squareStats = new Stats(squareBodyStats, [])
 
-var pentagonBodyStats = new PentagonBodyStats(40, 0, 20)
+var pentagonBodyStats = new PentagonBodyStats(40, 0, 20, 0x268bd2) // Solarized blue
 var pentagonStats = new Stats(pentagonBodyStats, [])
 
-var hexagonBodyStats = new HexagonBodyStats(40, 0, 40)
+var hexagonBodyStats = new HexagonBodyStats(40, 0, 40, 0xdc322f) // Solarized red
 var hexagonStats = new Stats(hexagonBodyStats, [])
 
-var bulletBodyStats = new CircleBodyStats(3, 15, 20)
+var bulletBodyStats = new CircleBodyStats(3, 15, 20, playerColor)
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
 
