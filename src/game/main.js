@@ -74,20 +74,24 @@ class Stats {
     this.weaponStatsList = weaponStatsList;
   }
 
-  makeGuy(isPlayer) {
-    var guy = this.bodyStats.makeGuy(isPlayer);
-    guy.weaponList = []
+  makePlayer() {
+    var player = this.bodyStats.makePlayer();
+    player.weaponList = []
 
     for (var weaponIndex in this.weaponStatsList) {
       var weaponStats = this.weaponStatsList[weaponIndex];
 
       var newWeapon = new Weapon(weaponStats);
-      guy.weaponList.push(newWeapon);
+      player.weaponList.push(newWeapon);
     }
 
-    guy.stats = this;
+    player.stats = this;
 
-    return guy;
+    return player;
+  }
+
+  makeCreep() {
+    return this.bodyStats.makeCreep()
   }
 }
 
@@ -97,7 +101,7 @@ class Weapon {
   }
 
   fire() {
-
+    bulletBodyStats.makeBullet()
   }
 }
 
@@ -133,31 +137,40 @@ class BodyStats {
     this.bodyDamage = bodyDamage;
   }
 
-  makeGuy(isPlayer) {
-    var guy = creeps.create(game.world.randomX, game.world.randomY);
+  setStuff(guy) {
     guy.health = this.maxHealth;
     guy.addChild(this.graphicsCreator());
-
     this.setBody(guy);
-
     guy.body.bodyStats = this;
+  }
 
-    if (isPlayer) {
-      //  Set the ships collision group
-      guy.body.setCollisionGroup(playerCollisionGroup);
+  makeBullet() {
+    var bullet = bullets.create(ship.x, ship.y);
+    this.setStuff(bullet);
 
-      //  The ship will collide with the creeps, and when it strikes one the hitCreep callback will fire, causing it to alpha out a bit
-      //  When creeps collide with each other, nothing happens to them.
-      guy.body.collides(creepCollisionGroup, hitCreep, this);
-    } else {
-      // Tell the creep to use the creepCollisionGroup
-      guy.body.setCollisionGroup(creepCollisionGroup);
+    bullet.body.setCollitionGroup(bulletCollisionGroup)
+    bullet.body.collides([creepCollisionGroup], hitCreep)
+    return bullet;
+  }
 
-      // Creeps collide with both creeps and players
-      guy.body.collides([creepCollisionGroup, playerCollisionGroup], hitCreep);
-    }
+  makeCreep() {
+    var creep = creeps.create(game.world.randomX, game.world.randomY);
+    this.setStuff(creep);
 
-    return guy;
+    creep.body.setCollisionGroup(creepCollisionGroup);
+    creep.body.collides([creepCollisionGroup, playerCollisionGroup, bulletCollisionGroup], hitCreep);
+
+    return creep;
+  }
+
+  makePlayer() {
+    var player = players.create(game.world.randomX, game.world.randomY);
+    this.setStuff(player);
+
+    player.body.setCollisionGroup(playerCollisionGroup);
+    player.body.collides(creepCollisionGroup, hitCreep, this);
+
+    return player;
   }
 
   graphicsCreator() {
@@ -255,6 +268,8 @@ var pentagonStats = new Stats(pentagonBodyStats, [])
 var hexagonBodyStats = new HexagonBodyStats(40, 0, 40)
 var hexagonStats = new Stats(hexagonBodyStats, [])
 
+var bulletBodyStats = new BodyStats(3, 15, 20)
+
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
 
 function preload() {
@@ -266,6 +281,7 @@ var cursors;
 // Phaser groups
 var creeps;
 var bullets;
+var players;
 
 // Physics groups
 var creepCollisionGroup;
@@ -297,12 +313,16 @@ function create() {
   creeps.enableBody = true;
   creeps.physicsBodyType = Phaser.Physics.P2JS;
 
-  bullets = game.add.group()
+  bullets = game.add.group();
   bullets.enableBody = true;
   bullets.physicsBodyType = Phaser.Physics.P2JS;
 
+  players = game.add.group();
+  players.enableBody = true;
+  players.physicsBodyType = Phaser.Physics.P2JS;
+
   //  Create our ship sprite
-  ship = machineGunStats.makeGuy(true);
+  ship = machineGunStats.makePlayer();
   game.camera.follow(ship);
 
   cursors = game.input.keyboard.createCursorKeys();
@@ -319,13 +339,13 @@ function hitCreep(body1, body2) {
 function update() {
   // Spawn new triangles
   if (Math.random() <= 0.01)
-    triangleStats.makeGuy(false);
+    triangleStats.makeCreep();
   else if (Math.random() <= 0.003)
-    squareStats.makeGuy(false);
+    squareStats.makeCreep();
   else if (Math.random() <= 0.01)
-    pentagonStats.makeGuy(false);
+    pentagonStats.makeCreep();
   else if (Math.random() <= 0.005)
-    hexagonStats.makeGuy(false);
+    hexagonStats.makeCreep();
 
   ship.body.setZeroVelocity();
 
