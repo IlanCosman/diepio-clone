@@ -90,7 +90,15 @@ class Stats {
   }
 
   makeCreep() {
-    return this.bodyStats.makeCreep()
+    var creep = this.bodyStats.makeCreep();
+    creep.stats = this;
+    return creep;
+  }
+
+  makeBullet(mountedWeaponStats) {
+    var bullet = this.bodyStats.makeBullet(mountedWeaponStats);
+    bullet.stats = this;
+    return bullet;
   }
 }
 
@@ -101,7 +109,7 @@ class Weapon {
   }
 
   fire() {
-    bulletBodyStats.makeBullet(this.mountedWeaponStats)
+    bulletStats.makeBullet(this.mountedWeaponStats)
   }
 }
 
@@ -184,7 +192,7 @@ class BodyStats {
   graphicsCreator() {
     var graphics = game.add.graphics()
     graphics.beginFill(this.fillColor, 1);
-    graphics.lineStyle(this.bodyDamage*1.1, 0x002b36, 1);
+    graphics.lineStyle(this.bodyDamage*2.1, 0x002b36, 1);
     return graphics;
   }
 
@@ -277,19 +285,20 @@ var quadStats = new Stats(quadBodyStats, [
   new MountedWeaponStats(normalGun, 270)]);
 
 // Creeps
-var triangleBodyStats = new TriangleBodyStats(10, 0, 0.5, 0xdc322f) // Solarized yellow
-var triangleStats = new Stats(triangleBodyStats, [])
+var triangleBodyStats = new TriangleBodyStats(10, 0, 0.5, 0xdc322f); // Solarized yellow
+var triangleStats = new Stats(triangleBodyStats, []);
 
-var squareBodyStats = new SquareBodyStats(20, 0, 1, 0x859900) // Solarized green
-var squareStats = new Stats(squareBodyStats, [])
+var squareBodyStats = new SquareBodyStats(20, 0, 1, 0x859900); // Solarized green
+var squareStats = new Stats(squareBodyStats, []);
 
-var pentagonBodyStats = new PentagonBodyStats(40, 0, 2, 0x268bd2) // Solarized blue
-var pentagonStats = new Stats(pentagonBodyStats, [])
+var pentagonBodyStats = new PentagonBodyStats(40, 0, 2, 0x268bd2); // Solarized blue
+var pentagonStats = new Stats(pentagonBodyStats, []);
 
-var hexagonBodyStats = new HexagonBodyStats(40, 0, 4, 0xdc322f) // Solarized red
-var hexagonStats = new Stats(hexagonBodyStats, [])
+var hexagonBodyStats = new HexagonBodyStats(40, 0, 4, 0xdc322f); // Solarized red
+var hexagonStats = new Stats(hexagonBodyStats, []);
 
-var bulletBodyStats = new CircleBodyStats(0.1, 15, 0.2, playerColor)
+var bulletBodyStats = new CircleBodyStats(1, 15, 1, playerColor);
+var bulletStats = new Stats(bulletBodyStats, []);
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
 
@@ -350,11 +359,14 @@ function create() {
 }
 
 function hitCreep(body1, body2) {
-  //  body1 is the space ship (as it's the body that owns the callback)
-  //  body2 is the body it impacted with, in this case our creep
-  //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
-  body1.sprite.damage(body2.bodyStats.bodyDamage);
-  body2.sprite.damage(body1.bodyStats.bodyDamage);
+  var sprite1 = body1.sprite;
+  var sprite2 = body2.sprite;
+
+  sprite1.damage(sprite2.stats.bodyStats.bodyDamage);
+  sprite2.damage(sprite1.stats.bodyStats.bodyDamage);
+
+  sprite1.alpha = 0.2 + sprite1.health / sprite1.stats.bodyStats.maxHealth;
+  sprite2.alpha = 0.2 + sprite2.health / sprite2.stats.bodyStats.maxHealth;
 }
 
 function update() {
