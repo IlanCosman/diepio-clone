@@ -76,13 +76,13 @@ class Stats {
 
   makeGuy(isPlayer) {
     var guy = this.bodyStats.makeGuy(isPlayer);
+    guy.weaponList = []
 
     for (var weaponIndex in this.weaponStatsList) {
       var weaponStats = this.weaponStatsList[weaponIndex];
 
       var newWeapon = new Weapon(weaponStats);
-
-
+      guy.weaponList.push(newWeapon);
     }
 
     guy.stats = this;
@@ -261,12 +261,16 @@ function preload() {
 }
 
 var ship;
-var starfield;
 var cursors;
 
+// Phaser groups
 var creeps;
+var bullets;
+
+// Physics groups
 var creepCollisionGroup;
 var playerCollisionGroup;
+var bulletCollisionGroup;
 
 function create() {
   //  Enable P2
@@ -274,7 +278,7 @@ function create() {
 
   //  Turn on impact events for the world, without this we get no collision callbacks
   game.physics.p2.setImpactEvents(true);
-  var p2 = game.physics.p2
+  var p2 = game.physics.p2;
 
   // I don't know what this does
   p2.restitution = 0.8;
@@ -282,15 +286,20 @@ function create() {
   //  Create our collision groups. One for the player, one for the creeps
   playerCollisionGroup = p2.createCollisionGroup();
   creepCollisionGroup = p2.createCollisionGroup();
+  bulletCollisionGroup = p2.createCollisionGroup();
 
   //  This part is vital if you want the objects with their own collision groups to still collide with the world bounds
   //  (which we do) - what this does is adjust the bounds to use its own collision group.
   p2.updateBoundsCollisionGroup();
 
+  // Initialize the groups
   creeps = game.add.group();
   creeps.enableBody = true;
   creeps.physicsBodyType = Phaser.Physics.P2JS;
-  creeps.enableBodyDebug = true;
+
+  bullets = game.add.group()
+  bullets.enableBody = true;
+  bullets.physicsBodyType = Phaser.Physics.P2JS;
 
   //  Create our ship sprite
   ship = machineGunStats.makeGuy(true);
@@ -310,13 +319,13 @@ function hitCreep(body1, body2) {
 function update() {
   // Spawn new triangles
   if (Math.random() <= 0.01)
-    triangleStats.makeGuy(false)
+    triangleStats.makeGuy(false);
   else if (Math.random() <= 0.003)
-    squareStats.makeGuy(false)
+    squareStats.makeGuy(false);
   else if (Math.random() <= 0.01)
-    pentagonStats.makeGuy(false)
+    pentagonStats.makeGuy(false);
   else if (Math.random() <= 0.005)
-    hexagonStats.makeGuy(false)
+    hexagonStats.makeGuy(false);
 
   ship.body.setZeroVelocity();
 
@@ -329,4 +338,12 @@ function update() {
       ship.body.moveUp(200);
   else if (cursors.down.isDown)
       ship.body.moveDown(200);
+
+  if (true) {
+    for (weaponIndex in ship.weaponList) {
+      var weapon = ship.weaponList[weaponIndex]
+
+      weapon.fire()
+    }
+  }
 }
