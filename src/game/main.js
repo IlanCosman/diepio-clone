@@ -85,6 +85,13 @@ class Stats {
   }
 }
 
+class Weapon {
+  constructor() {
+
+  }
+}
+
+
 class WeaponStats {
   constructor(fireRate, bulletSpeed) {
     this.fireRate = fireRate
@@ -123,6 +130,8 @@ class BodyStats {
     guy.addChild(this.graphicsCreator());
 
     this.setBody(guy);
+
+    guy.body.bodyStats = this;
 
     if (isPlayer) {
       //  Set the ships collision group
@@ -282,14 +291,11 @@ function create() {
 }
 
 function hitCreep(body1, body2) {
-
   //  body1 is the space ship (as it's the body that owns the callback)
   //  body2 is the body it impacted with, in this case our creep
   //  As body2 is a Phaser.Physics.P2.Body object, you access its own (the sprite) via the sprite property:
-  console.log(body1)
-  console.log(body2)
-  body1.sprite.damage(body2.sprite.stats.bodyStats.bodyDamage);
-  body2.sprite.damage(body1.sprite.stats.bodyStats.bodyDamage);
+  body1.sprite.damage(body2.bodyStats.bodyDamage);
+  body2.sprite.damage(body1.bodyStats.bodyDamage);
 }
 
 function update() {
