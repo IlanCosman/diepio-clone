@@ -366,7 +366,7 @@ function create() {
   game.stage.backgroundColor = 0x073642;
 
   // Make the world fairly large
-  game.world.setBounds(0, 0, 1000, 1000);
+  game.world.setBounds(0, 0, 2000, 2000);
 
   //  Enable P2
   game.physics.startSystem(Phaser.Physics.P2JS);
