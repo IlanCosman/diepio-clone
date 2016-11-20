@@ -285,6 +285,17 @@ var quadStats = new Stats(quadBodyStats, [
   new MountedWeaponStats(normalGun, 180),
   new MountedWeaponStats(normalGun, 270)]);
 
+var octoBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
+var octoStats = new Stats(octoBodyStats, [
+  new MountedWeaponStats(normalGun, 0),
+  new MountedWeaponStats(normalGun, 45),
+  new MountedWeaponStats(normalGun, 90),
+  new MountedWeaponStats(normalGun, 135),
+  new MountedWeaponStats(normalGun, 180),
+  new MountedWeaponStats(normalGun, 225),
+  new MountedWeaponStats(normalGun, 270),
+  new MountedWeaponStats(normalGun, 325)]);
+
 // Creeps
 var triangleBodyStats = new TriangleBodyStats(10, 0, 0.5, 0xdc322f); // Solarized yellow
 var triangleStats = new Stats(triangleBodyStats, []);
