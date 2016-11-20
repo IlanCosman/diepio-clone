@@ -126,9 +126,10 @@ class MountedWeaponStats{
 }
 
 class WeaponStats {
-  constructor(reloadTime, bulletSpeed) {
+  constructor(reloadTime, bulletSpeed, range) {
     this.reloadTime = reloadTime;
     this.bulletSpeed = bulletSpeed;
+    this.range = range;
   }
 }
 
@@ -273,14 +274,14 @@ class OctagonBodyStats extends RegularPolygonBodyStats {
 }
 
 // The guns
-var fastGun = new WeaponStats(25, 500);
-var fastGun = new WeaponStats(10, 200);
+var regularGun = new WeaponStats(25, 500, 4000);
+var fastGun = new WeaponStats(10, 200, 4000);
 
 // Create the classes
 playerColor = 0x268bd2; // Solarized blue
 var tankBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var tankStats = new Stats(tankBodyStats, [
-  new MountedWeaponStats(fastGun)], 20);
+  new MountedWeaponStats(regularGun)], 20);
 
 var machineGunBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var machineGunStats = new Stats(machineGunBodyStats, [
@@ -288,27 +289,27 @@ var machineGunStats = new Stats(machineGunBodyStats, [
 
 var tripleBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var tripleStats = new Stats(tripleBodyStats, [
-  new MountedWeaponStats(fastGun, -45),
-  new MountedWeaponStats(fastGun, 0),
-  new MountedWeaponStats(fastGun, 45)], 250);
+  new MountedWeaponStats(regularGun, -45),
+  new MountedWeaponStats(regularGun, 0),
+  new MountedWeaponStats(regularGun, 45)], 250);
 
 var quadBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var quadStats = new Stats(quadBodyStats, [
-  new MountedWeaponStats(fastGun, 0),
-  new MountedWeaponStats(fastGun, 90),
-  new MountedWeaponStats(fastGun, 180),
-  new MountedWeaponStats(fastGun, 270)], 200);
+  new MountedWeaponStats(regularGun, 0),
+  new MountedWeaponStats(regularGun, 90),
+  new MountedWeaponStats(regularGun, 180),
+  new MountedWeaponStats(regularGun, 270)], 200);
 
 var octoBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var octoStats = new Stats(octoBodyStats, [
-  new MountedWeaponStats(fastGun, 0),
-  new MountedWeaponStats(fastGun, 45),
-  new MountedWeaponStats(fastGun, 90),
-  new MountedWeaponStats(fastGun, 135),
-  new MountedWeaponStats(fastGun, 180),
-  new MountedWeaponStats(fastGun, 225),
-  new MountedWeaponStats(fastGun, 270),
-  new MountedWeaponStats(fastGun, 325)], 700);
+  new MountedWeaponStats(regularGun, 0),
+  new MountedWeaponStats(regularGun, 45),
+  new MountedWeaponStats(regularGun, 90),
+  new MountedWeaponStats(regularGun, 135),
+  new MountedWeaponStats(regularGun, 180),
+  new MountedWeaponStats(regularGun, 225),
+  new MountedWeaponStats(regularGun, 270),
+  new MountedWeaponStats(regularGun, 325)], 700);
 
 // Creeps
 //Example: var triangleBodyStats = new TriangleBodyStats( HEALTH 10, SPEED 0, BODYDAMAGE 0.5, COLOR 0xdc322f); // Solarized yellow
