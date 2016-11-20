@@ -168,7 +168,6 @@ class BodyStats {
     bullet.body.velocity.y = vector.y;
 
     bullet.lifespan = 1000 * mountedWeaponStats.weaponStats.range / mountedWeaponStats.weaponStats.bulletStats.bodyStats.speed;
-    console.log(bullet.lifespan)
 
     return bullet;
   }
