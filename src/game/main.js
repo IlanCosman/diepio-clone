@@ -150,13 +150,13 @@ class BodyStats {
     bullet.body.setCollisionGroup(bulletCollisionGroup);
     bullet.body.collides([creepCollisionGroup], hitCreep);
 
-    var activePointerPoint = new Phaser.Point(game.input.activePointer.x, game.input.activePointer.y)
-    activePointerPoint.subtract(bullet.body.x, bullet.body.y)
-    activePointerPoint.setMagnitude(mountedWeaponStats.weaponStats.bulletSpeed)
-    activePointerPoint.rotate(0, 0, mountedWeaponStats.angle, true);
+    var vector = new Phaser.Point(game.input.activePointer.worldX, game.input.activePointer.worldY)
+    vector.subtract(bullet.body.x, bullet.body.y)
+    vector.setMagnitude(mountedWeaponStats.weaponStats.bulletSpeed)
+    vector.rotate(0, 0, mountedWeaponStats.angle, true);
 
-    bullet.body.velocity.x = activePointerPoint.x;
-    bullet.body.velocity.y = activePointerPoint.y;
+    bullet.body.velocity.x = vector.x;
+    bullet.body.velocity.y = vector.y;
 
     bullet.lifespan = 1000;
 
@@ -276,7 +276,6 @@ var machineGunBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var machineGunStats = new Stats(machineGunBodyStats, [
   new MountedWeaponStats(fastGun)]);
 
-
 var tripleBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var tripleStats = new Stats(tripleBodyStats, [
   new MountedWeaponStats(fastGun, 45),
@@ -391,7 +390,7 @@ function create() {
   players.physicsBodyType = Phaser.Physics.P2JS;
 
   //  Create our ship sprite
-  ship = tripleStats.makePlayer();
+  ship = quadStats.makePlayer();
   game.camera.follow(ship);
 
   cursors = game.input.keyboard.createCursorKeys();
