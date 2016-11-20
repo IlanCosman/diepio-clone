@@ -167,7 +167,7 @@ class BodyStats {
     bullet.body.velocity.x = vector.x;
     bullet.body.velocity.y = vector.y;
 
-    bullet.lifespan = 1000;
+    bullet.lifespan = 1000 * mountedWeaponStats.weaponStats.range / mountedWeaponStats.weaponStats.bulletSpeed;
 
     return bullet;
   }
@@ -274,8 +274,10 @@ class OctagonBodyStats extends RegularPolygonBodyStats {
 }
 
 // The guns
-var regularGun = new WeaponStats(25, 500, 4000);
-var fastGun = new WeaponStats(10, 200, 4000);
+// reloadTime, bulletSpeed, range
+var regularGun = new WeaponStats(15, 500, 800);
+var fastGun = new WeaponStats(8, 500, 800);
+var superFastGun = new WeaponStats(3, 500, 800);
 
 // Create the classes
 playerColor = 0x268bd2; // Solarized blue
