@@ -4,13 +4,11 @@ To Do
 
 Creeps
 ============
-
-1. Octagons
-2. Diffrent types of nests
-3. AI Creeps
-4. Powerups
-5. AI Creep spawning points
-6. AI creep spawning points give buffs of diffrent types
+1. Diffrent types of nests
+2. AI Creeps
+3. Powerups
+4. AI Creep spawning points
+5. AI creep spawning points give buffs of diffrent types
 
 Classes
 ============
@@ -59,13 +57,8 @@ Abilities
 
 Misc
 ============
-1. Fix Images
-2. Auto fire
-3. Auto rotate
-4. Classes
-5. Creeps
-6. Add momentum
-7. Collisions
+Auto fire
+Auto rotate
 */
 
 class Stats {
@@ -328,6 +321,11 @@ function preload() {
 }
 
 var ship;
+
+var aKey;
+var wKey;
+var dKey;
+var sKey;
 var cursors;
 
 // Phaser groups
@@ -341,6 +339,11 @@ var playerCollisionGroup;
 var bulletCollisionGroup;
 
 function create() {
+  aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
+  wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
+  sKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
+  dKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
+
   // Set background color
   game.stage.backgroundColor = 0x073642;
 
@@ -411,15 +414,15 @@ function update() {
     octagonStats.makeCreep();
 
   ship.body.setZeroVelocity();
-
-  if (cursors.left.isDown)
+  //Movement
+  if (cursors.left.isDown || aKey.isDown)
       ship.body.moveLeft(200);
-  else if (cursors.right.isDown)
+  else if (cursors.right.isDown || dKey.isDown)
       ship.body.moveRight(200);
 
-  if (cursors.up.isDown)
+  if (cursors.up.isDown || wKey.isDown)
       ship.body.moveUp(200);
-  else if (cursors.down.isDown)
+  else if (cursors.down.isDown || sKey.isDown)
       ship.body.moveDown(200);
 
   if (true) {
