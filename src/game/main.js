@@ -179,6 +179,8 @@ class BodyStats {
     creep.body.collides(creepCollisionGroup); // creeps don't hurt eachother when they collide
     creep.body.collides([playerCollisionGroup, bulletCollisionGroup], hitCreep);
 
+    creep.body.damping = .9;
+
     return creep;
   }
 
