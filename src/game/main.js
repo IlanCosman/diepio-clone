@@ -137,11 +137,12 @@ class WeaponStats {
 This is an abstract class. That means that you shouldn't instatiate it.
 */
 class BodyStats {
-  constructor(maxHealth, speed, bodyDamage, fillColor) {
+  constructor(maxHealth, speed, bodyDamage, fillColor, size) {
     this.maxHealth = maxHealth;
     this.speed = speed;
     this.bodyDamage = bodyDamage;
     this.fillColor = fillColor;
+    this.size = size;
   }
 
   setStuff(guy) {
@@ -180,7 +181,7 @@ class BodyStats {
     creep.body.collides(creepCollisionGroup); // creeps don't hurt eachother when they collide
     creep.body.collides([playerCollisionGroup, bulletCollisionGroup], hitCreep);
 
-    creep.body.damping = .9;
+    creep.body.damping = 0.6;
 
     return creep;
   }
@@ -209,9 +210,8 @@ class BodyStats {
 
 class CircleBodyStats extends BodyStats {
   graphicsCreator() {
-    var scale = Math.max(30, this.maxHealth);
     var graphics = super.graphicsCreator();
-    graphics.drawCircle(0, 0, scale);
+    graphics.drawCircle(0, 0, this.size);
     return graphics;
   }
 
@@ -243,11 +243,10 @@ class RegularPolygonBodyStats extends PolygonBodyStats {
   }
 
   polygon() {
-    var scale = this.maxHealth;
     var list = []
     for (var angle = 2*Math.PI; angle > 0; angle-=2*Math.PI/this.sides()) {
-      list.push(Math.cos(angle) * scale);
-      list.push(Math.sin(angle) * scale);
+      list.push(Math.cos(angle) * this.size);
+      list.push(Math.sin(angle) * this.size);
     }
     return list
   }
@@ -278,42 +277,42 @@ playerColor = 0x268bd2; // Solarized blue
 
 // Guns and Bullets
 // bulletStats, reloadTime, range
-var regularBulletBodyStats = new CircleBodyStats(1, 500, 5, playerColor);
+var regularBulletBodyStats = new CircleBodyStats(1, 500, 5, playerColor, 25);
 var regularBulletStats = new Stats(regularBulletBodyStats, [], 0);
 var regularGun = new WeaponStats(regularBulletStats, 15, 800);
 
-var fastBulletBodyStats = new CircleBodyStats(1, 500, 5, playerColor);
+var fastBulletBodyStats = new CircleBodyStats(1, 500, 5, playerColor, 25);
 var fastBulletStats = new Stats(fastBulletBodyStats, [], 0);
 var fastGun = new WeaponStats(fastBulletStats, 8, 800);
 
-var superFastBulletBodyStats = new CircleBodyStats(1, 500, 5, playerColor);
+var superFastBulletBodyStats = new CircleBodyStats(1, 500, 5, playerColor, 25);
 var superFastBulletStats = new Stats(regularBulletBodyStats, [], 0);
 var superFastGun = new WeaponStats(superFastBulletStats, 3, 800);
 
 
 // Create the classes
-var tankBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
+var tankBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 60);
 var tankStats = new Stats(tankBodyStats, [
   new MountedWeaponStats(regularGun)], 20);
 
-var machineGunBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
+var machineGunBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 70);
 var machineGunStats = new Stats(machineGunBodyStats, [
   new MountedWeaponStats(fastGun)], 100);
 
-var tripleBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
+var tripleBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 90);
 var tripleStats = new Stats(tripleBodyStats, [
   new MountedWeaponStats(regularGun, -45),
   new MountedWeaponStats(regularGun, 0),
   new MountedWeaponStats(regularGun, 45)], 250);
 
-var quadBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
+var quadBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 80);
 var quadStats = new Stats(quadBodyStats, [
   new MountedWeaponStats(regularGun, 0),
   new MountedWeaponStats(regularGun, 90),
   new MountedWeaponStats(regularGun, 180),
   new MountedWeaponStats(regularGun, 270)], 200);
 
-var octoBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
+var octoBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 100);
 var octoStats = new Stats(octoBodyStats, [
   new MountedWeaponStats(regularGun, 0),
   new MountedWeaponStats(regularGun, 45),
@@ -326,22 +325,22 @@ var octoStats = new Stats(octoBodyStats, [
 
 
 // Creeps
-//Example: var triangleBodyStats = new TriangleBodyStats( HEALTH 10, SPEED 0, BODYDAMAGE 0.5, COLOR 0xdc322f); // Solarized yellow
+//Example: var triangleBodyStats = new TriangleBodyStats( HEALTH 10, SPEED 0, BODYDAMAGE 0.5, COLOR 0xdc322f, SIZE 15); // Solarized yellow
 //Example: var triangleStats = new Stats(triangleBodyStats, [], KILL_REWARD);
 
-var triangleBodyStats = new TriangleBodyStats(10, 0, 0.5, 0xdc322f); // Solarized yellow
+var triangleBodyStats = new TriangleBodyStats(10, 0, 0.5, 0xb58900, 18); // Solarized yellow
 var triangleStats = new Stats(triangleBodyStats, [], 3);
 
-var squareBodyStats = new SquareBodyStats(20, 0, 1, 0x859900); // Solarized green
+var squareBodyStats = new SquareBodyStats(20, 0, 1, 0xcb4b16, 19); // Solarized green
 var squareStats = new Stats(squareBodyStats, [], 5);
 
-var pentagonBodyStats = new PentagonBodyStats(40, 0, 2, 0x268bd2); // Solarized blue
+var pentagonBodyStats = new PentagonBodyStats(40, 0, 2, 0x268bd2, 27); // Solarized blue
 var pentagonStats = new Stats(pentagonBodyStats, [], 10);
 
-var hexagonBodyStats = new HexagonBodyStats(40, 0, 4, 0xdc322f); // Solarized red
+var hexagonBodyStats = new HexagonBodyStats(40, 0, 4, 0x6c71c4	, 29); // Solarized red
 var hexagonStats = new Stats(hexagonBodyStats, [], 20);
 
-var octagonBodyStats = new OctagonBodyStats(100, 0, 4, 0xdc322f); // Solarized red
+var octagonBodyStats = new OctagonBodyStats(100, 0, 4, 0xd33682, 32); // Solarized red
 var octagonStats = new Stats(octagonBodyStats, [], 100);
 
 
