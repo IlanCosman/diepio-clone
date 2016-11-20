@@ -61,10 +61,19 @@ Auto fire
 Auto rotate
 */
 
+/*
+When you kill someone you get their whole killReward plus some of their score
+*/
 class Stats {
-  constructor(bodyStats, mountedWeaponStatsList) {
+  constructor(bodyStats, mountedWeaponStatsList, killReward) {
     this.bodyStats = bodyStats;
     this.mountedWeaponStatsList = mountedWeaponStatsList;
+    this.killReward = killReward;
+  }
+
+  setStats(guy) {
+    guy.stats = this;
+    guy.score = 0;
   }
 
   makePlayer() {
@@ -77,20 +86,19 @@ class Stats {
       player.weaponList.push(newWeapon);
     }
 
-    player.stats = this;
-
+    this.setStats(player);
     return player;
   }
 
   makeCreep() {
     var creep = this.bodyStats.makeCreep();
-    creep.stats = this;
+    this.setStats(creep);
     return creep;
   }
 
   makeBullet(mountedWeaponStats) {
     var bullet = this.bodyStats.makeBullet(mountedWeaponStats);
-    bullet.stats = this;
+    this.setStats(bullet);
     return bullet;
   }
 }
@@ -270,24 +278,24 @@ var fastGun = new WeaponStats(10, 200);
 playerColor = 0x268bd2; // Solarized blue
 var tankBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var tankStats = new Stats(tankBodyStats, [
-  new MountedWeaponStats(fastGun)]);
+  new MountedWeaponStats(fastGun)], 20);
 
 var machineGunBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var machineGunStats = new Stats(machineGunBodyStats, [
-  new MountedWeaponStats(fastGun)]);
+  new MountedWeaponStats(fastGun)], 100);
 
 var tripleBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var tripleStats = new Stats(tripleBodyStats, [
   new MountedWeaponStats(fastGun, -45),
   new MountedWeaponStats(fastGun, 0),
-  new MountedWeaponStats(fastGun, 45)]);
+  new MountedWeaponStats(fastGun, 45)], 250);
 
 var quadBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var quadStats = new Stats(quadBodyStats, [
   new MountedWeaponStats(fastGun, 0),
   new MountedWeaponStats(fastGun, 90),
   new MountedWeaponStats(fastGun, 180),
-  new MountedWeaponStats(fastGun, 270)]);
+  new MountedWeaponStats(fastGun, 270)], 200);
 
 var octoBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var octoStats = new Stats(octoBodyStats, [
@@ -298,29 +306,29 @@ var octoStats = new Stats(octoBodyStats, [
   new MountedWeaponStats(fastGun, 180),
   new MountedWeaponStats(fastGun, 225),
   new MountedWeaponStats(fastGun, 270),
-  new MountedWeaponStats(fastGun, 325)]);
+  new MountedWeaponStats(fastGun, 325)], 700);
 
 // Creeps
 //Example: var triangleBodyStats = new TriangleBodyStats( HEALTH 10, SPEED 0, BODYDAMAGE 0.5, COLOR 0xdc322f); // Solarized yellow
 //Example: var triangleStats = new Stats(triangleBodyStats, []);
 
 var triangleBodyStats = new TriangleBodyStats(10, 0, 0.5, 0xdc322f); // Solarized yellow
-var triangleStats = new Stats(triangleBodyStats, []);
+var triangleStats = new Stats(triangleBodyStats, [], 3);
 
 var squareBodyStats = new SquareBodyStats(20, 0, 1, 0x859900); // Solarized green
-var squareStats = new Stats(squareBodyStats, []);
+var squareStats = new Stats(squareBodyStats, [], 5);
 
 var pentagonBodyStats = new PentagonBodyStats(40, 0, 2, 0x268bd2); // Solarized blue
-var pentagonStats = new Stats(pentagonBodyStats, []);
+var pentagonStats = new Stats(pentagonBodyStats, [], 10);
 
 var hexagonBodyStats = new HexagonBodyStats(40, 0, 4, 0xdc322f); // Solarized red
-var hexagonStats = new Stats(hexagonBodyStats, []);
+var hexagonStats = new Stats(hexagonBodyStats, [], 20);
 
 var octagonBodyStats = new OctagonBodyStats(100, 0, 4, 0xdc322f); // Solarized red
-var octagonStats = new Stats(octagonBodyStats, []);
+var octagonStats = new Stats(octagonBodyStats, [], 100);
 
 var bulletBodyStats = new CircleBodyStats(1, 15, 1, playerColor);
-var bulletStats = new Stats(bulletBodyStats, []);
+var bulletStats = new Stats(bulletBodyStats, [], 0);
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
 
@@ -405,6 +413,12 @@ function hitCreep(body1, body2) {
 
   sprite1.alpha = 0.2 + sprite1.health / sprite1.stats.bodyStats.maxHealth;
   sprite2.alpha = 0.2 + sprite2.health / sprite2.stats.bodyStats.maxHealth;
+
+  // moving score from any dead parties to alive parties
+  if (sprite1.health < 0)
+    sprite2.score += sprite1.stats.killReward + sprite1.score * 0.4;
+  if (sprite2.health < 0)
+    sprite1.score += sprite2.stats.killReward + sprite2.score * 0.4;
 }
 
 function update() {
