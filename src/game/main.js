@@ -279,9 +279,9 @@ var machineGunStats = new Stats(machineGunBodyStats, [
 
 var tripleBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var tripleStats = new Stats(tripleBodyStats, [
-  new MountedWeaponStats(fastGun, 45),
-  new MountedWeaponStats(fastGun, 90),
-  new MountedWeaponStats(fastGun, 135)]);
+  new MountedWeaponStats(fastGun, -45),
+  new MountedWeaponStats(fastGun, 0),
+  new MountedWeaponStats(fastGun, 45)]);
 
 var quadBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var quadStats = new Stats(quadBodyStats, [
