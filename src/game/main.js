@@ -139,6 +139,7 @@ class BodyStats {
     guy.health = this.maxHealth;
     guy.addChild(this.graphicsCreator());
     this.setBody(guy);
+    guy.body.mass = this.maxHealth;
     guy.body.bodyStats = this;
   }
 
