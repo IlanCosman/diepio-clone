@@ -264,15 +264,19 @@ class HexagonBodyStats extends RegularPolygonBodyStats {
   sides() { return 6; }
 }
 
+class OctagonBodyStats extends RegularPolygonBodyStats {
+  sides() { return 8; }
+}
+
 // The guns
-var normalGun = new WeaponStats(25, 500);
+var fastGun = new WeaponStats(25, 500);
 var fastGun = new WeaponStats(10, 200);
 
 // Create the classes
 playerColor = 0x268bd2; // Solarized blue
 var tankBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var tankStats = new Stats(tankBodyStats, [
-  new MountedWeaponStats(normalGun)]);
+  new MountedWeaponStats(fastGun)]);
 
 var machineGunBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var machineGunStats = new Stats(machineGunBodyStats, [
@@ -280,23 +284,26 @@ var machineGunStats = new Stats(machineGunBodyStats, [
 
 var quadBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var quadStats = new Stats(quadBodyStats, [
-  new MountedWeaponStats(normalGun, 0),
-  new MountedWeaponStats(normalGun, 90),
-  new MountedWeaponStats(normalGun, 180),
-  new MountedWeaponStats(normalGun, 270)]);
+  new MountedWeaponStats(fastGun, 0),
+  new MountedWeaponStats(fastGun, 90),
+  new MountedWeaponStats(fastGun, 180),
+  new MountedWeaponStats(fastGun, 270)]);
 
 var octoBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var octoStats = new Stats(octoBodyStats, [
-  new MountedWeaponStats(normalGun, 0),
-  new MountedWeaponStats(normalGun, 45),
-  new MountedWeaponStats(normalGun, 90),
-  new MountedWeaponStats(normalGun, 135),
-  new MountedWeaponStats(normalGun, 180),
-  new MountedWeaponStats(normalGun, 225),
-  new MountedWeaponStats(normalGun, 270),
-  new MountedWeaponStats(normalGun, 325)]);
+  new MountedWeaponStats(fastGun, 0),
+  new MountedWeaponStats(fastGun, 45),
+  new MountedWeaponStats(fastGun, 90),
+  new MountedWeaponStats(fastGun, 135),
+  new MountedWeaponStats(fastGun, 180),
+  new MountedWeaponStats(fastGun, 225),
+  new MountedWeaponStats(fastGun, 270),
+  new MountedWeaponStats(fastGun, 325)]);
 
 // Creeps
+//Example: var triangleBodyStats = new TriangleBodyStats( HEALTH 10, SPEED 0, BODYDAMAGE 0.5, COLOR 0xdc322f); // Solarized yellow
+//Example: var triangleStats = new Stats(triangleBodyStats, []);
+
 var triangleBodyStats = new TriangleBodyStats(10, 0, 0.5, 0xdc322f); // Solarized yellow
 var triangleStats = new Stats(triangleBodyStats, []);
 
@@ -308,6 +315,9 @@ var pentagonStats = new Stats(pentagonBodyStats, []);
 
 var hexagonBodyStats = new HexagonBodyStats(40, 0, 4, 0xdc322f); // Solarized red
 var hexagonStats = new Stats(hexagonBodyStats, []);
+
+var octagonBodyStats = new OctagonBodyStats(100, 0, 4, 0xdc322f); // Solarized red
+var octagonStats = new Stats(octagonBodyStats, []);
 
 var bulletBodyStats = new CircleBodyStats(1, 15, 1, playerColor);
 var bulletStats = new Stats(bulletBodyStats, []);
@@ -370,7 +380,7 @@ function create() {
   players.physicsBodyType = Phaser.Physics.P2JS;
 
   //  Create our ship sprite
-  ship = quadStats.makePlayer();
+  ship = octoStats.makePlayer();
   game.camera.follow(ship);
 
   cursors = game.input.keyboard.createCursorKeys();
@@ -397,6 +407,8 @@ function update() {
     pentagonStats.makeCreep();
   else if (Math.random() <= 0.005)
     hexagonStats.makeCreep();
+  else if (Math.random() <= 0.0000005)
+    octagonStats.makeCreep();
 
   ship.body.setZeroVelocity();
 
