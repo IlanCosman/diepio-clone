@@ -276,6 +276,13 @@ var machineGunBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var machineGunStats = new Stats(machineGunBodyStats, [
   new MountedWeaponStats(fastGun)]);
 
+
+var tripleBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
+var tripleStats = new Stats(tripleBodyStats, [
+  new MountedWeaponStats(fastGun, 45),
+  new MountedWeaponStats(fastGun, 90),
+  new MountedWeaponStats(fastGun, 135)]);
+
 var quadBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var quadStats = new Stats(quadBodyStats, [
   new MountedWeaponStats(fastGun, 0),
@@ -384,7 +391,7 @@ function create() {
   players.physicsBodyType = Phaser.Physics.P2JS;
 
   //  Create our ship sprite
-  ship = octoStats.makePlayer();
+  ship = tripleStats.makePlayer();
   game.camera.follow(ship);
 
   cursors = game.input.keyboard.createCursorKeys();
