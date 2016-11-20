@@ -110,7 +110,7 @@ class Weapon {
   }
 
   fire() {
-    bulletStats.makeBullet(this.mountedWeaponStats)
+    this.mountedWeaponStats.weaponStats.bulletStats.makeBullet(this.mountedWeaponStats)
   }
 }
 
@@ -126,9 +126,9 @@ class MountedWeaponStats{
 }
 
 class WeaponStats {
-  constructor(reloadTime, bulletSpeed, range) {
+  constructor(bulletStats, reloadTime, range) {
+    this.bulletStats = bulletStats;
     this.reloadTime = reloadTime;
-    this.bulletSpeed = bulletSpeed;
     this.range = range;
   }
 }
@@ -161,13 +161,14 @@ class BodyStats {
 
     var vector = new Phaser.Point(game.input.activePointer.worldX, game.input.activePointer.worldY)
     vector.subtract(bullet.body.x, bullet.body.y)
-    vector.setMagnitude(mountedWeaponStats.weaponStats.bulletSpeed)
+    vector.setMagnitude(mountedWeaponStats.weaponStats.bulletStats.bodyStats.speed)
     vector.rotate(0, 0, mountedWeaponStats.angle, true);
 
     bullet.body.velocity.x = vector.x;
     bullet.body.velocity.y = vector.y;
 
-    bullet.lifespan = 1000 * mountedWeaponStats.weaponStats.range / mountedWeaponStats.weaponStats.bulletSpeed;
+    bullet.lifespan = 1000 * mountedWeaponStats.weaponStats.range / mountedWeaponStats.weaponStats.bulletStats.bodyStats.speed;
+    console.log(bullet.lifespan)
 
     return bullet;
   }
@@ -273,14 +274,25 @@ class OctagonBodyStats extends RegularPolygonBodyStats {
   sides() { return 8; }
 }
 
-// The guns
-// reloadTime, bulletSpeed, range
-var regularGun = new WeaponStats(15, 500, 800);
-var fastGun = new WeaponStats(8, 500, 800);
-var superFastGun = new WeaponStats(3, 500, 800);
+// The color of the player and their bullets
+playerColor = 0x268bd2; // Solarized blue
+
+// Guns and Bullets
+// bulletStats, reloadTime, range
+var regularBulletBodyStats = new CircleBodyStats(1, 500, 5, playerColor);
+var regularBulletStats = new Stats(regularBulletBodyStats, [], 0);
+var regularGun = new WeaponStats(regularBulletStats, 15, 800);
+
+var fastBulletBodyStats = new CircleBodyStats(1, 500, 5, playerColor);
+var fastBulletStats = new Stats(fastBulletBodyStats, [], 0);
+var fastGun = new WeaponStats(fastBulletStats, 8, 800);
+
+var superFastBulletBodyStats = new CircleBodyStats(1, 500, 5, playerColor);
+var superFastBulletStats = new Stats(regularBulletBodyStats, [], 0);
+var superFastGun = new WeaponStats(superFastBulletStats, 3, 800);
+
 
 // Create the classes
-playerColor = 0x268bd2; // Solarized blue
 var tankBodyStats = new CircleBodyStats(100, 50, 5, playerColor);
 var tankStats = new Stats(tankBodyStats, [
   new MountedWeaponStats(regularGun)], 20);
@@ -313,9 +325,10 @@ var octoStats = new Stats(octoBodyStats, [
   new MountedWeaponStats(regularGun, 270),
   new MountedWeaponStats(regularGun, 325)], 700);
 
+
 // Creeps
 //Example: var triangleBodyStats = new TriangleBodyStats( HEALTH 10, SPEED 0, BODYDAMAGE 0.5, COLOR 0xdc322f); // Solarized yellow
-//Example: var triangleStats = new Stats(triangleBodyStats, []);
+//Example: var triangleStats = new Stats(triangleBodyStats, [], KILL_REWARD);
 
 var triangleBodyStats = new TriangleBodyStats(10, 0, 0.5, 0xdc322f); // Solarized yellow
 var triangleStats = new Stats(triangleBodyStats, [], 3);
@@ -332,8 +345,7 @@ var hexagonStats = new Stats(hexagonBodyStats, [], 20);
 var octagonBodyStats = new OctagonBodyStats(100, 0, 4, 0xdc322f); // Solarized red
 var octagonStats = new Stats(octagonBodyStats, [], 100);
 
-var bulletBodyStats = new CircleBodyStats(1, 15, 1, playerColor);
-var bulletStats = new Stats(bulletBodyStats, [], 0);
+
 
 var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-example', { preload: preload, create: create, update: update});
 
