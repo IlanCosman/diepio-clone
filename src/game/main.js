@@ -439,15 +439,15 @@ function hitCreep(body1, body2) {
 
 function update() {
   // Spawn new triangles
-  if (Math.random() <= 0.01)
+  if (Math.random() <= 0.05)
     triangleStats.makeCreep();
-  else if (Math.random() <= 0.003)
+  else if (Math.random() <= 0.03)
     squareStats.makeCreep();
   else if (Math.random() <= 0.01)
     pentagonStats.makeCreep();
   else if (Math.random() <= 0.005)
     hexagonStats.makeCreep();
-  else if (Math.random() <= 0.0000005)
+  else if (Math.random() <= 0.0005)
     octagonStats.makeCreep();
 
   ship.body.setZeroVelocity();
