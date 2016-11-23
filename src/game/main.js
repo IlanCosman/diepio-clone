@@ -347,6 +347,14 @@ var tripleStats = new Stats(tripleBodyStats, [
   new MountedWeaponStats(regularGun, 0),
   new MountedWeaponStats(regularGun, 45)], 250);
 
+var pentaBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 90);
+var pentaStats = new Stats(pentaBodyStats, [
+  new MountedWeaponStats(regularGun, -45),
+  new MountedWeaponStats(regularGun, -25),
+  new MountedWeaponStats(regularGun, 25),
+  new MountedWeaponStats(regularGun, 0),
+  new MountedWeaponStats(regularGun, 45)], 250);
+
 var quadBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 80);
 var quadStats = new Stats(quadBodyStats, [
   new MountedWeaponStats(regularGun, 0),
@@ -455,7 +463,7 @@ function create() {
   players.physicsBodyType = Phaser.Physics.P2JS;
 
   //  Create our ship sprite
-  ship = assassinStats.makePlayer();
+  ship = pentaStats.makePlayer();
   game.camera.follow(ship);
 
   cursors = game.input.keyboard.createCursorKeys();
