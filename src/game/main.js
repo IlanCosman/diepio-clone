@@ -301,6 +301,10 @@ var assassinBulletBodyStats = new CircleBodyStats(1, 800, 15, playerColor, 25);
 var assassinBulletStats = new Stats(assassinBulletBodyStats, [], 0);
 var assassinGun = new WeaponStats(assassinBulletStats, 35, 900);
 
+var largeBulletBodyStats = new CircleBodyStats(1, 400, 5, playerColor, 25);
+var largeBulletStats = new Stats(largeBulletBodyStats, [], 0);
+var largeGun = new WeaponStats(largeBulletStats, 50, 600);
+
 // Create the classes
 var tankBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 60);
 var tankStats = new Stats(tankBodyStats, [
@@ -438,6 +442,7 @@ var playerCollisionGroup;
 var bulletCollisionGroup;
 
 function create() {
+
   aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
   wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
   sKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
@@ -531,7 +536,7 @@ function update() {
   else if (cursors.down.isDown || sKey.isDown)
       ship.body.moveDown(200);
 
-  if (true)  {
+  if (game.input.activePointer.isDown)  {
     for (weaponIndex in ship.weaponList) {
       var weapon = ship.weaponList[weaponIndex]
 
