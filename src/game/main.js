@@ -273,7 +273,7 @@ class OctagonBodyStats extends RegularPolygonBodyStats {
 }
 
 // The color of the player and their bullets
-playerColor = 0x268bd2; // Solarized blue
+playerColor = 0x2aa198; // Solarized blue
 
 // Guns and Bullets
 // bulletStats, reloadTime, range
