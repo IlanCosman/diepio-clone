@@ -279,16 +279,19 @@ playerColor = 0x268bd2; // Solarized blue
 // bulletStats, reloadTime, range
 var regularBulletBodyStats = new CircleBodyStats(1, 500, 5, playerColor, 25);
 var regularBulletStats = new Stats(regularBulletBodyStats, [], 0);
-var regularGun = new WeaponStats(regularBulletStats, 15, 800);
+var regularGun = new WeaponStats(regularBulletStats, 18, 600);
 
 var fastBulletBodyStats = new CircleBodyStats(1, 500, 5, playerColor, 25);
 var fastBulletStats = new Stats(fastBulletBodyStats, [], 0);
-var fastGun = new WeaponStats(fastBulletStats, 8, 800);
+var fastGun = new WeaponStats(fastBulletStats, 8, 600);
 
 var superFastBulletBodyStats = new CircleBodyStats(1, 500, 5, playerColor, 25);
 var superFastBulletStats = new Stats(regularBulletBodyStats, [], 0);
-var superFastGun = new WeaponStats(superFastBulletStats, 3, 800);
+var superFastGun = new WeaponStats(superFastBulletStats, 3, 600);
 
+var sniperBulletBodyStats = new CircleBodyStats(1, 700, 5, playerColor, 25);
+var sniperBulletStats = new Stats(sniperBulletBodyStats, [], 0);
+var sniperGun = new WeaponStats(sniperBulletStats, 25, 800);
 
 // Create the classes
 var tankBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 60);
@@ -298,6 +301,10 @@ var tankStats = new Stats(tankBodyStats, [
 var machineGunBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 70);
 var machineGunStats = new Stats(machineGunBodyStats, [
   new MountedWeaponStats(fastGun)], 100);
+
+var sniperBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 70);
+var sniperStats = new Stats(sniperBodyStats, [
+  new MountedWeaponStats(sniperGun)], 100);
 
 var flankGuardBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 70);
 var flankGuardStats = new Stats(flankGuardBodyStats, [
@@ -440,7 +447,7 @@ function create() {
   players.physicsBodyType = Phaser.Physics.P2JS;
 
   //  Create our ship sprite
-  ship = flankGuardStats.makePlayer();
+  ship = sniperStats.makePlayer();
   game.camera.follow(ship);
 
   cursors = game.input.keyboard.createCursorKeys();
