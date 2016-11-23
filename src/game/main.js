@@ -277,6 +277,10 @@ playerColor = 0x2aa198; // Solarized blue
 
 // Guns and Bullets
 // bulletStats, reloadTime, range
+var smallBulletBodyStats = new CircleBodyStats(1, 500, 2, playerColor, 15);
+var smallBulletStats = new Stats(smallBulletBodyStats, [], 0);
+var smallGun = new WeaponStats(smallBulletStats, 18, 600);
+
 var regularBulletBodyStats = new CircleBodyStats(1, 500, 5, playerColor, 25);
 var regularBulletStats = new Stats(regularBulletBodyStats, [], 0);
 var regularGun = new WeaponStats(regularBulletStats, 18, 600);
@@ -355,6 +359,20 @@ var pentaStats = new Stats(pentaBodyStats, [
   new MountedWeaponStats(regularGun, 0),
   new MountedWeaponStats(regularGun, 45)], 250);
 
+var spreadShotBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 90);
+var spreadShotStats = new Stats(spreadShotBodyStats, [
+  new MountedWeaponStats(smallGun, -85),
+  new MountedWeaponStats(smallGun, -68),
+  new MountedWeaponStats(smallGun, -51),
+  new MountedWeaponStats(smallGun, -34),
+  new MountedWeaponStats(smallGun, -17),
+  new MountedWeaponStats(regularGun, 0),
+  new MountedWeaponStats(smallGun, 85),
+  new MountedWeaponStats(smallGun, 68),
+  new MountedWeaponStats(smallGun, 51),
+  new MountedWeaponStats(smallGun, 34),
+  new MountedWeaponStats(smallGun, 17)], 250);
+
 var quadBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 80);
 var quadStats = new Stats(quadBodyStats, [
   new MountedWeaponStats(regularGun, 0),
@@ -406,6 +424,7 @@ var aKey;
 var wKey;
 var dKey;
 var sKey;
+var eKey;
 var cursors;
 
 // Phaser groups
@@ -423,6 +442,7 @@ function create() {
   wKey = game.input.keyboard.addKey(Phaser.Keyboard.W);
   sKey = game.input.keyboard.addKey(Phaser.Keyboard.S);
   dKey = game.input.keyboard.addKey(Phaser.Keyboard.D);
+  eKey = game.input.keyboard.addKey(Phaser.Keyboard.E);
 
   // Set background color
   game.stage.backgroundColor = 0x073642;
@@ -463,7 +483,7 @@ function create() {
   players.physicsBodyType = Phaser.Physics.P2JS;
 
   //  Create our ship sprite
-  ship = pentaStats.makePlayer();
+  ship = spreadShotStats.makePlayer();
   game.camera.follow(ship);
 
   cursors = game.input.keyboard.createCursorKeys();
@@ -511,7 +531,7 @@ function update() {
   else if (cursors.down.isDown || sKey.isDown)
       ship.body.moveDown(200);
 
-  if (true) {
+  if (true)  {
     for (weaponIndex in ship.weaponList) {
       var weapon = ship.weaponList[weaponIndex]
 
