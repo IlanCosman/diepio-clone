@@ -299,6 +299,11 @@ var machineGunBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 70);
 var machineGunStats = new Stats(machineGunBodyStats, [
   new MountedWeaponStats(fastGun)], 100);
 
+var flankGuardBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 70);
+var flankGuardStats = new Stats(flankGuardBodyStats, [
+  new MountedWeaponStats(regularGun, 0),
+  new MountedWeaponStats(regularGun, 180)], 100);
+
 var triangleClassBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 90);
 var triangleClassStats = new Stats(triangleClassBodyStats, [
   new MountedWeaponStats(regularGun, 0),
@@ -435,7 +440,7 @@ function create() {
   players.physicsBodyType = Phaser.Physics.P2JS;
 
   //  Create our ship sprite
-  ship = fighterStats.makePlayer();
+  ship = flankGuardStats.makePlayer();
   game.camera.follow(ship);
 
   cursors = game.input.keyboard.createCursorKeys();
