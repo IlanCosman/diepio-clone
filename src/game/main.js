@@ -313,6 +313,14 @@ var boosterStats = new Stats(boosterBodyStats, [
   new MountedWeaponStats(regularGun, -155),
   new MountedWeaponStats(regularGun, -145)], 250);
 
+var fighterBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 90);
+var fighterStats = new Stats(fighterBodyStats, [
+  new MountedWeaponStats(regularGun, 0),
+  new MountedWeaponStats(regularGun, 145),
+  new MountedWeaponStats(regularGun, 90),
+  new MountedWeaponStats(regularGun, -90),
+  new MountedWeaponStats(regularGun, -145)], 250);
+
 var tripleBodyStats = new CircleBodyStats(100, 50, 5, playerColor, 90);
 var tripleStats = new Stats(tripleBodyStats, [
   new MountedWeaponStats(regularGun, -45),
@@ -427,7 +435,7 @@ function create() {
   players.physicsBodyType = Phaser.Physics.P2JS;
 
   //  Create our ship sprite
-  ship = boosterStats.makePlayer();
+  ship = fighterStats.makePlayer();
   game.camera.follow(ship);
 
   cursors = game.input.keyboard.createCursorKeys();
