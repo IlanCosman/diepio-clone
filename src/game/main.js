@@ -441,6 +441,8 @@ var creepCollisionGroup;
 var playerCollisionGroup;
 var bulletCollisionGroup;
 
+var scoreText;
+
 function create() {
 
   aKey = game.input.keyboard.addKey(Phaser.Keyboard.A);
@@ -492,6 +494,16 @@ function create() {
   game.camera.follow(ship);
 
   cursors = game.input.keyboard.createCursorKeys();
+
+  var style = { font: "bold 32px Arial", fill: "#fff", boundsAlignH: "centerx", boundsAlignV: "middle" };
+
+  //  The Text is positioned at 0, 100
+  scoreText = game.add.text(0, 0, ship.score, style);
+  scoreText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 2);
+
+  //  We'll set the bounds to be from x0, y100 and be 800px wide by 100px high
+  scoreText.setTextBounds(10, -20, 800, 100);
+  scoreText.fixedToCamera = true;
 }
 
 function hitCreep(body1, body2) {
@@ -504,11 +516,11 @@ function hitCreep(body1, body2) {
   sprite1.alpha = 0.2 + sprite1.health / sprite1.stats.bodyStats.maxHealth;
   sprite2.alpha = 0.2 + sprite2.health / sprite2.stats.bodyStats.maxHealth;
 
-  // moving score from any dead parties to alive parties
+  // moving score from any dead parties to the player
   if (sprite1.health < 0)
-    sprite2.score += sprite1.stats.killReward + sprite1.score * 0.4;
+    ship.score += sprite1.stats.killReward + sprite1.score * 0.4;
   if (sprite2.health < 0)
-    sprite1.score += sprite2.stats.killReward + sprite2.score * 0.4;
+    ship.score += sprite2.stats.killReward + sprite2.score * 0.4;
 }
 
 function update() {
@@ -548,4 +560,7 @@ function update() {
       weapon.timeTillNextShot--;
     }
   }
+
+  // Update the displayed score
+  scoreText.setText("Score: " + ship.score);
 }
