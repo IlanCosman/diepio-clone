@@ -400,19 +400,19 @@ var octoStats = new Stats(octoBodyStats, [
 //Example: var triangleBodyStats = new TriangleBodyStats( HEALTH 10, SPEED 0, BODYDAMAGE 0.5, COLOR 0xdc322f, SIZE 15); // Solarized yellow
 //Example: var triangleStats = new Stats(triangleBodyStats, [], KILL_REWARD);
 
-var triangleBodyStats = new TriangleBodyStats(10, 0, 0.5, 0xb58900, 18); // Solarized yellow
+var triangleBodyStats = new TriangleBodyStats(20, 0, 0.5, 0xb58900, 18); // Solarized yellow
 var triangleStats = new Stats(triangleBodyStats, [], 3);
 
-var squareBodyStats = new SquareBodyStats(20, 0, 1, 0xcb4b16, 19); // Solarized green
+var squareBodyStats = new SquareBodyStats(30, 0, 1, 0xcb4b16, 19); // Solarized green
 var squareStats = new Stats(squareBodyStats, [], 5);
 
-var pentagonBodyStats = new PentagonBodyStats(40, 0, 2, 0x268bd2, 27); // Solarized blue
+var pentagonBodyStats = new PentagonBodyStats(50, 0, 2, 0x268bd2, 27); // Solarized blue
 var pentagonStats = new Stats(pentagonBodyStats, [], 10);
 
-var hexagonBodyStats = new HexagonBodyStats(40, 0, 4, 0x6c71c4	, 29); // Solarized red
+var hexagonBodyStats = new HexagonBodyStats(50, 0, 4, 0x6c71c4	, 29); // Solarized red
 var hexagonStats = new Stats(hexagonBodyStats, [], 20);
 
-var octagonBodyStats = new OctagonBodyStats(100, 0, 4, 0xd33682, 32); // Solarized red
+var octagonBodyStats = new OctagonBodyStats(120, 0, 4, 0xd33682, 32); // Solarized red
 var octagonStats = new Stats(octagonBodyStats, [], 100);
 
 
@@ -510,17 +510,17 @@ function hitCreep(body1, body2) {
   var sprite1 = body1.sprite;
   var sprite2 = body2.sprite;
 
+  // moving score from any dead parties to the player
+  if (sprite1.health < sprite2.stats.bodyStats.bodyDamage)
+    ship.score += sprite1.stats.killReward;
+  if (sprite2.health < sprite1.stats.bodyStats.bodyDamage)
+    ship.score += sprite2.stats.killReward;
+
   sprite1.damage(sprite2.stats.bodyStats.bodyDamage);
   sprite2.damage(sprite1.stats.bodyStats.bodyDamage);
 
   sprite1.alpha = 0.2 + sprite1.health / sprite1.stats.bodyStats.maxHealth;
   sprite2.alpha = 0.2 + sprite2.health / sprite2.stats.bodyStats.maxHealth;
-
-  // moving score from any dead parties to the player
-  if (sprite1.health < 0)
-    ship.score += sprite1.stats.killReward + sprite1.score * 0.4;
-  if (sprite2.health < 0)
-    ship.score += sprite2.stats.killReward + sprite2.score * 0.4;
 }
 
 function update() {
