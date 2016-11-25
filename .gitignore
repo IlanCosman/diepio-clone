@@ -1,5 +1,3 @@
-deploy/*
-!deploy/index.html
 # Logs
 logs
 *.log
